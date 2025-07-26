@@ -145,7 +145,7 @@ function Origin() {
       render: (x, item) => (
         <>
           <Tooltip placement="top" title="Chỉnh sửa">
-            <Link to={"/admin/xuatxu"}>
+            <Link to={"/admin/origin"}>
               <button
                 type="primary"
                 onClick={() => {

@@ -16,8 +16,8 @@ public interface XuatXuRepository extends JpaRepository<XuatXu,Long> {
             SELECT
             s.id AS id,
             s.name AS name,
-            s.ngay_tao AS createAt,
-            ROW_NUMBER() OVER(ORDER BY s.ngay_tao DESC) AS indexs,
+            s.create_at AS createAt,
+            ROW_NUMBER() OVER(ORDER BY s.create_at DESC) AS indexs,
             s.deleted AS status
             FROM xuat_xu s
             LEFT JOIN chi_tiet_san_pham sd ON s.id = sd.kich_co_id

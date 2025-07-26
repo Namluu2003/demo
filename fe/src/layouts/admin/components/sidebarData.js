@@ -12,6 +12,12 @@ const sidebarData = [
     path: "/admin/bill",
   },
   {
+      key: "thongKe",
+      title: "Thống kê",
+      icon: "fa-solid fa-chart-line", // biểu đồ
+      path: "/",
+    },
+  {
     key: "qlsanpham",
     title: "Quản lý sản phẩm",
     icon: "fa-solid fa-boxes-stacked",

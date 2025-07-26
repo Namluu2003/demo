@@ -30,7 +30,7 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
             a.tinh_thanh_pho AS province,
             a.dia_chi_cu_the AS specificAddress,
             a.dia_chi_mac_dinh AS defaultAddress,
-            ROW_NUMBER() OVER(ORDER BY a.ngay_tao DESC) AS indexs,
+            ROW_NUMBER() OVER(ORDER BY a.create_at DESC) AS indexs,
             a.deleted AS status
             FROM dia_chi a 
             LEFT JOIN account ac on ac.id = a.account_id

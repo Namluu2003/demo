@@ -149,7 +149,7 @@ return (
                     <td className="bg-primary">Sản phẩm</td>
                     <td className="bg-primary">Số lượng</td>
                     <td className="bg-primary">Đơn giá</td>
-                    <td className="bg-primary">Cân nặng</td>
+                    {/* <td className="bg-primary">Cân nặng</td> */}
                     <td className="bg-primary">Xuất xứ</td>
                     <td className="bg-primary">Thương hiệu</td>
                     <td className="bg-primary">Cổ áo</td>
@@ -198,7 +198,7 @@ return (
                                 } // Show formatted price on blur
                               />
                             </td>
-                            <td width="100px">
+                            {/* <td width="100px">
                               <Input
                                 className="table-input"
                                 defaultValue={option.weight}
@@ -206,7 +206,7 @@ return (
                                   handleChangeWeight(value, key, idx)
                                 }
                               />
-                            </td>
+                            </td> */}
                             <td>{option.shoe.xuatXu}</td>
                             <td>{option.shoe.thuongHieu}</td>
                             <td>{option.shoe.coAo}</td>

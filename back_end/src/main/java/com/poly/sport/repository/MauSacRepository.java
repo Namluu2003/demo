@@ -19,8 +19,8 @@ public interface MauSacRepository extends JpaRepository<MauSac, Long> {
             SELECT
             c.id AS id,
             c.name AS name,
-            c.ngay_tao AS createAt,
-            ROW_NUMBER() OVER(ORDER BY c.ngay_tao DESC) AS indexs,
+            c.create_at AS createAt,
+            ROW_NUMBER() OVER(ORDER BY c.create_at DESC) AS indexs,
             c.deleted AS status
             FROM mau_sac c
             LEFT JOIN chi_tiet_san_pham sd ON c.id = sd.kich_co_id

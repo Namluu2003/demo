@@ -30,9 +30,9 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
             a.so_dien_thoai as phoneNumber,
             a.gioi_tinh as gender,
             a.ngay_sinh AS birthday,
-            a.ngay_tao as createAt,
+            a.create_at as createAt,
             a.deleted as status,
-            ROW_NUMBER() OVER(ORDER BY a.ngay_tao DESC) AS indexs
+            ROW_NUMBER() OVER(ORDER BY a.create_at DESC) AS indexs
             from Account a
             left join role r on r.id = a.role_id
             where (:#{#req.name} is null

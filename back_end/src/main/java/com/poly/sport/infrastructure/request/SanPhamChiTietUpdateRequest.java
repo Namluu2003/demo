@@ -14,13 +14,12 @@ public class SanPhamChiTietUpdateRequest {
     private String color;
     @NotNull(message = "Vui lòng chọn kích cỡ!")
     private String size;
-//    @NotNull(message = "Vui lòng chọn loại đế!")
-//    private String sole;
+
     @NotNull(message = "Số lượng không được để trống!")
     private Integer quantity;
     @NotNull(message = "Đơn giá không được để trống!")
     private BigDecimal price;
-    @NotNull(message = "Cân nặng không được để trống!")
+//    @NotNull(message = "Cân nặng không được để trống!")
     private Double weight;
 
     private Boolean deleted;

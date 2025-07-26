@@ -22,6 +22,7 @@ import CustomerDetail from './pages/admin/account/customer/CustomerDetail';
 import Voucher from './pages/admin/voucher/Voucher';
 import AddVoucher from './pages/admin/voucher/AddVoucher';
 import VoucherDetail from './pages/admin/voucher/VoucherDetail';
+import VoucherDetail1 from './pages/admin/voucher/VoucherDetail1';
 import Bill from "./pages/admin/bill/Bill";
 import BillDetail from "./pages/admin/bill/BillDetail";
 
@@ -29,12 +30,12 @@ import ImageGallery from "./pages/admin/ImageGallery";
 
 import Order from './pages/admin/order/Order';
 import Payment from "./pages/admin/payment/Payment";
-
+import Statistic from "./pages/admin/statistic/Statistic";
 import UserProfile from "./pages/admin/settings/UserProfile";
 import withAuth from "./auth";
 
 const publicRouters = [
-
+ { path: "/", element: withAuth(Statistic, "ROLE_ADMIN") },
   { path: "/admin/product", element: withAuth(Shoe) }, // Không yêu cầu role cụ thể
   { path: "/admin/color", element: withAuth(Color,"ROLE_ADMIN") },
   { path: "/admin/size", element: withAuth(Size,"ROLE_ADMIN") },
@@ -58,7 +59,8 @@ const publicRouters = [
   { path: "/admin/voucher", element: withAuth(Voucher, "ROLE_ADMIN") }, // Chỉ admin
   { path: "/admin/voucher/add", element: withAuth(AddVoucher, "ROLE_ADMIN") },
   { path: "/admin/voucher/:id", element: withAuth(VoucherDetail, "ROLE_ADMIN") },
- { path: "/admin/order", element: withAuth(Order) },
+  { path: "/admin/voucher-detail/:id", element: withAuth(VoucherDetail1) },
+  { path: "/admin/order", element: withAuth(Order) },
   { path: "/admin/image-gallery", element: withAuth(ImageGallery) },
 
  { path: "/admin/bill", element: withAuth(Bill) },

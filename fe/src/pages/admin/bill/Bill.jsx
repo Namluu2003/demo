@@ -165,6 +165,7 @@ const Bill = ({ onLoad }) => {
           7: "Hủy",
           8: "Hoàn 1 phần",
           9: "Đã xác nhận",
+          10: "Đã giao hàng",
           500: "Chỉnh sửa đơn hàng",
         };
         const statusName = statusMap[status] || "Không xác định";

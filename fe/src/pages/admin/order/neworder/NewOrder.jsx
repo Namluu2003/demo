@@ -7,7 +7,8 @@ import OrderItem from "./OrderItem";
 import Loading from "~/components/Loading/Loading";
 import { toast } from "react-toastify";
 import { FaShoppingCart, FaTimesCircle } from "react-icons/fa";
-
+import { jwtDecode } from "jwt-decode";
+import { getTokenEmpoloyee } from "~/helper/useCookies";
 function NewOrder() {
   const [listOrder, setListOrder] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,7 +25,9 @@ function NewOrder() {
   const loadOrders = async () => {
     try {
       const response = await request.get(`/bill/new-bill`, {
-        params: { status: 1 },
+        params: { status: 1 ,
+           idStaff: jwtDecode(getTokenEmpoloyee()).id,
+        },
       });
       const ordersWithTotalQuantity = await Promise.all(
         response.map(async (order) => {

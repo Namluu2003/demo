@@ -171,11 +171,11 @@ function ChangeInfoBill({ bill, onSuccess }) {
 
   return (
     <>
+{/*  
       <Button 
-        type="primary" 
-        className="text-while bg-blue" 
+        type="primary" htmlType="submit"
         onClick={showModal}
-        // disabled={bill.status >= 4} // Disable button in Status 4 and beyond
+ 
       >
         Thay đổi thông tin
       </Button>
@@ -185,7 +185,21 @@ function ChangeInfoBill({ bill, onSuccess }) {
         onCancel={() => setIsModalOpen(false)}
         footer={null}
         width={700}
-      >
+      > */}
+      {(bill?.status !== 9 && bill?.status <= 3) && (
+  <Button type="primary" onClick={showModal}>
+    Thay đổi thông tin
+  </Button>
+)}
+
+<Modal
+  title="Thay đổi thông tin"
+  open={isModalOpen}
+  onCancel={() => setIsModalOpen(false)}
+  footer={null}
+  width={700}
+>
+
         <Form form={form} layout="vertical" onFinish={handleChangeInfo}>
           <Row gutter={10}>
             <Col xl={12}>

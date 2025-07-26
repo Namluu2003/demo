@@ -144,7 +144,7 @@ function Material() {
       render: (x, item) => (
         <>
           <Tooltip placement="top" title="Chỉnh sửa">
-            <Link to={"/admin/chatlieu"}>
+            <Link to={"/admin/material"}>
               <button
                 type="primary"
                 onClick={() => {

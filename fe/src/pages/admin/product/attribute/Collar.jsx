@@ -144,7 +144,7 @@ function Collar() {
       render: (x, item) => (
         <>
           <Tooltip placement="top" title="Chỉnh sửa">
-            <Link to={"/admin/coao"}>
+            <Link to={"/admin/collar"}>
               <button
                 type="primary"
                 onClick={() => {

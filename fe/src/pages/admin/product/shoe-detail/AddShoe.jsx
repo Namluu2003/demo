@@ -61,7 +61,7 @@ function AddProduct() {
           price: 200000,
           quantity: 100,
           deleted: false,
-          weight: 800,
+          // weight: 800,
         };
         options.push(option);
       });

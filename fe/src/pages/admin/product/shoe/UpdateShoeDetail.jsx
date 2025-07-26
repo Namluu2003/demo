@@ -261,7 +261,7 @@ function UpdateShoeDetail({ props, onSuccess }) {
                 <Input placeholder="Nhập số lượng..." />
               </Form.Item>
             </Col>
-            <Col xl={8}>
+            {/* <Col xl={8}>
               <Form.Item
                 label={"Cân nặng"}
                 name={"weight"}
@@ -271,7 +271,7 @@ function UpdateShoeDetail({ props, onSuccess }) {
               >
                 <Input placeholder="Nhập cân nặng..." />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col xl={20} className="d-flex justify-content-center">
               <QRCode value={props.code} size={300} />
             </Col>

@@ -144,7 +144,7 @@ function Sleeve() {
       render: (x, item) => (
         <>
           <Tooltip placement="top" title="Chỉnh sửa">
-            <Link to={"/admin/tayao"}>
+            <Link to={"/admin/sleeve"}>
               <button
                 type="primary"
                 onClick={() => {

@@ -7,6 +7,8 @@ import com.poly.sport.infrastructure.constant.*;
 import com.poly.sport.infrastructure.converter.BillConvert;
 import com.poly.sport.infrastructure.exception.NgoaiLe;
 
+import com.poly.sport.infrastructure.request.BillClientRequest;
+import com.poly.sport.infrastructure.request.CartClientRequest;
 import com.poly.sport.infrastructure.request.bill.BillRequest;
 import com.poly.sport.infrastructure.request.bill.BillSearchRequest;
 import com.poly.sport.infrastructure.response.BillResponse;
@@ -57,6 +59,8 @@ public class BillServiceImpl implements BillService {
     private GHNService ghnService;
     @Autowired
     private KhuyenMaiChiTietRepository khuyenMaiChiTietRepository;
+    @Autowired
+    private INotificationRepository notificationRepository;
 
     public PhanTrang<BillResponse> getAll(BillSearchRequest request) {
         Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSizePage());
@@ -108,248 +112,7 @@ public class BillServiceImpl implements BillService {
         return billSave;
     }
 
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public Bill orderBill(Long id, BillRequest request) {
-//        // Tìm hóa đơn theo ID, nếu không tồn tại thì ném ngoại lệ
-//        Bill bill = billRepository.findById(id)
-//                .orElseThrow(() -> new NgoaiLe("Hóa đơn không tồn tại"));
-//
-//        // Xử lý voucher nếu có
-//        if (request.getVoucher() != null) {
-//            // Kiểm tra và giảm số lượng voucher một cách nguyên tử
-//            int updatedRows = voucherRepository.decreaseQuantityIfAvailable(request.getVoucher());
-//            if (updatedRows == 0) {
-//                throw new NgoaiLe("Voucher đã hết số lượng hoặc không tồn tại!");
-//            }
-//        }
-//
-//        // Chuyển đổi request thành entity
-//        bill = billConvert.convertRequestToEntity(bill, request);
-//
-//        // Khởi tạo lịch sử hóa đơn và phương thức thanh toán
-//        BillHistory history = new BillHistory();
-//        history.setBill(bill);
-//
-//        PaymentMethod paymentMethod = new PaymentMethod();
-//        paymentMethod.setBill(bill);
-//        paymentMethod.setType(PaymentMethodConstant.TIEN_KHACH_DUA);
-//
-//        // Xử lý logic theo loại đơn hàng (Tại quầy hoặc Giao hàng)
-//        if (request.getType() == TyperOrderConstant.TAI_QUAY) {
-//            bill.setStatus(BillStatusConstant.HOAN_THANH);
-//            bill.setReceiveDate(System.currentTimeMillis());
-//
-//            // Xử lý phương thức thanh toán
-//            if (request.getPaymentMethod() == PaymentMethodConstant.TIEN_MAT) {
-//                paymentMethod.setTotalMoney(bill.getTotalMoney() != null ? bill.getTotalMoney() : BigDecimal.ZERO);
-//                paymentMethod.setNote("Đã thanh toán tiền mặt!");
-//                paymentMethod.setMethod(PaymentMethodConstant.TIEN_MAT);
-//                paymentMethodRepository.save(paymentMethod);
-//            } else if (request.getPaymentMethod() == PaymentMethodConstant.CHUYEN_KHOAN) {
-//                paymentMethod.setTotalMoney(bill.getTotalMoney() != null ? bill.getTotalMoney() : BigDecimal.ZERO);
-//                paymentMethod.setNote("Đã chuyển khoản!");
-//                paymentMethod.setTradingCode(request.getTradingCode());
-//                paymentMethod.setMethod(PaymentMethodConstant.CHUYEN_KHOAN);
-//                paymentMethodRepository.save(paymentMethod);
-//            } else if (request.getPaymentMethod() == PaymentMethodConstant.TIEN_MAT_VA_CHUYEN_KHOAN) {
-//                PaymentMethod paymentMethod1 = new PaymentMethod();
-//                paymentMethod1.setBill(bill);
-//                paymentMethod1.setTotalMoney(request.getTienMat() != null ? request.getTienMat() : BigDecimal.ZERO);
-//                paymentMethod1.setNote("Đã thanh toán tiền mặt!");
-//                paymentMethod1.setMethod(PaymentMethodConstant.TIEN_MAT);
-//                paymentMethod1.setType(PaymentMethodConstant.TIEN_KHACH_DUA);
-//                paymentMethodRepository.save(paymentMethod1);
-//
-//                paymentMethod.setTotalMoney(request.getTienChuyenKhoan() != null ? request.getTienChuyenKhoan() : BigDecimal.ZERO);
-//                paymentMethod.setTradingCode(request.getTradingCode());
-//                paymentMethod.setNote("Đã chuyển khoản!");
-//                paymentMethod.setMethod(PaymentMethodConstant.CHUYEN_KHOAN);
-//                paymentMethodRepository.save(paymentMethod);
-//            }
-//
-//            history.setNote("Mua hàng thành công!");
-//            history.setStatus(BillStatusConstant.HOAN_THANH);
-//        } else if (request.getType() == TyperOrderConstant.GIAO_HANG) {
-//            bill.setStatus(BillStatusConstant.CHO_GIAO);
-//            history.setStatus(BillStatusConstant.CHO_GIAO);
-//            history.setNote("Chờ giao");
-//
-//            // Xử lý thanh toán cho đơn giao hàng
-//            if (request.getPaymentMethod() == PaymentMethodConstant.CHUYEN_KHOAN) {
-//                BillHistory history1 = new BillHistory();
-//                history1.setBill(bill);
-//                history1.setNote("Đã xác nhận thông tin thanh toán!");
-//                history1.setStatus(BillStatusConstant.XAC_NHAN_THONG_TIN_THANH_TOAN);
-//                billHistoryRepository.save(history1);
-//
-//                BigDecimal totalMoney = bill.getTotalMoney() != null ? bill.getTotalMoney() : BigDecimal.ZERO;
-//                BigDecimal moneyShip = bill.getMoneyShip() != null ? bill.getMoneyShip() : BigDecimal.ZERO;
-//                paymentMethod.setTotalMoney(totalMoney.add(moneyShip));
-//                paymentMethod.setNote("Đã chuyển khoản!");
-//                paymentMethod.setTradingCode(request.getTradingCode());
-//                paymentMethod.setMethod(PaymentMethodConstant.CHUYEN_KHOAN);
-//                paymentMethodRepository.save(paymentMethod);
-//            } else if (request.getPaymentMethod() == PaymentMethodConstant.TIEN_MAT_VA_CHUYEN_KHOAN) {
-//                paymentMethod.setTotalMoney(request.getTienChuyenKhoan() != null ? request.getTienChuyenKhoan() : BigDecimal.ZERO);
-//                paymentMethod.setNote("Đã chuyển khoản!");
-//                paymentMethod.setTradingCode(request.getTradingCode());
-//                paymentMethod.setMethod(PaymentMethodConstant.CHUYEN_KHOAN);
-//                paymentMethodRepository.save(paymentMethod);
-//            }
-//        }
-//
-//        // Lưu lịch sử và hóa đơn
-//        billHistoryRepository.save(history);
-//        return billRepository.save(bill);
-//    }
 
-
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public Bill orderBill(Long id, BillRequest request) {
-//        // Tìm hóa đơn theo ID, nếu không tồn tại thì ném ngoại lệ
-//        Bill bill = billRepository.findById(id)
-//                .orElseThrow(() -> new NgoaiLe("Hóa đơn không tồn tại"));
-//
-//        // Xử lý voucher nếu có
-//        if (request.getVoucher() != null) {
-//            int updatedRows = voucherRepository.decreaseQuantityIfAvailable(request.getVoucher());
-//            if (updatedRows == 0) {
-//                throw new NgoaiLe("Voucher đã hết số lượng hoặc không tồn tại!");
-//            }
-//        }
-//
-//        // Chuyển đổi request thành entity
-//        bill = billConvert.convertRequestToEntity(bill, request);
-//
-//        // Khởi tạo lịch sử hóa đơn và phương thức thanh toán
-//        BillHistory history = new BillHistory();
-//        history.setBill(bill);
-//
-//        PaymentMethod paymentMethod = new PaymentMethod();
-//        paymentMethod.setBill(bill);
-//        paymentMethod.setType(PaymentMethodConstant.TIEN_KHACH_DUA);
-//
-//        // Xử lý logic theo loại đơn hàng (Tại quầy hoặc Giao hàng)
-//        if (request.getType() == TyperOrderConstant.TAI_QUAY) {
-//            bill.setStatus(BillStatusConstant.HOAN_THANH);
-//            bill.setReceiveDate(System.currentTimeMillis());
-//
-//            // Xử lý phương thức thanh toán
-//            if (request.getPaymentMethod() == PaymentMethodConstant.TIEN_MAT) {
-//                paymentMethod.setTotalMoney(bill.getTotalMoney() != null ? bill.getTotalMoney() : BigDecimal.ZERO);
-//                paymentMethod.setNote("Đã thanh toán tiền mặt!");
-//                paymentMethod.setMethod(PaymentMethodConstant.TIEN_MAT);
-//                paymentMethodRepository.save(paymentMethod);
-//            } else if (request.getPaymentMethod() == PaymentMethodConstant.CHUYEN_KHOAN) {
-//                paymentMethod.setTotalMoney(bill.getTotalMoney() != null ? bill.getTotalMoney() : BigDecimal.ZERO);
-//                paymentMethod.setNote("Đã chuyển khoản!");
-//                paymentMethod.setTradingCode(request.getTradingCode());
-//                paymentMethod.setMethod(PaymentMethodConstant.CHUYEN_KHOAN);
-//                paymentMethodRepository.save(paymentMethod);
-//            } else if (request.getPaymentMethod() == PaymentMethodConstant.TIEN_MAT_VA_CHUYEN_KHOAN) {
-//                PaymentMethod paymentMethod1 = new PaymentMethod();
-//                paymentMethod1.setBill(bill);
-//                paymentMethod1.setTotalMoney(request.getTienMat() != null ? request.getTienMat() : BigDecimal.ZERO);
-//                paymentMethod1.setNote("Đã thanh toán tiền mặt!");
-//                paymentMethod1.setMethod(PaymentMethodConstant.TIEN_MAT);
-//                paymentMethod1.setType(PaymentMethodConstant.TIEN_KHACH_DUA);
-//                paymentMethodRepository.save(paymentMethod1);
-//
-//                paymentMethod.setTotalMoney(request.getTienChuyenKhoan() != null ? request.getTienChuyenKhoan() : BigDecimal.ZERO);
-//                paymentMethod.setTradingCode(request.getTradingCode());
-//                paymentMethod.setNote("Đã chuyển khoản!");
-//                paymentMethod.setMethod(PaymentMethodConstant.CHUYEN_KHOAN);
-//                paymentMethodRepository.save(paymentMethod);
-//            }
-//
-//            history.setNote("Mua hàng thành công!");
-//            history.setStatus(BillStatusConstant.HOAN_THANH);
-//        } else if (request.getType() == TyperOrderConstant.GIAO_HANG) {
-//            bill.setStatus(BillStatusConstant.CHO_GIAO_HANG);
-//            history.setStatus(BillStatusConstant.CHO_GIAO_HANG);
-//            history.setNote("Chờ giao");
-//
-//            // Xử lý thanh toán cho đơn giao hàng
-//            if (request.getPaymentMethod() == PaymentMethodConstant.TIEN_MAT) {
-//                if (request.getTienMat() != null && request.getTienMat().compareTo(BigDecimal.ZERO) > 0) {
-//                    // Thanh toán tiền mặt tại quầy
-//                    BigDecimal totalMoney = bill.getTotalMoney() != null ? bill.getTotalMoney() : BigDecimal.ZERO;
-//                    BigDecimal moneyShip = bill.getMoneyShip() != null ? bill.getMoneyShip() : BigDecimal.ZERO;
-//                    paymentMethod.setTotalMoney(totalMoney.add(moneyShip));
-//                    paymentMethod.setNote("Đã thanh toán tiền mặt tại quầy!");
-//                    paymentMethod.setMethod(PaymentMethodConstant.TIEN_MAT);
-//                    paymentMethodRepository.save(paymentMethod);
-//
-//                    BillHistory historyPaid = new BillHistory();
-//                    historyPaid.setBill(bill);
-//                    historyPaid.setNote("Đã thanh toán tại quầy!");
-//                    historyPaid.setStatus(BillStatusConstant.XAC_NHAN_THONG_TIN_THANH_TOAN);
-//                    billHistoryRepository.save(historyPaid);
-//                }
-//            }
-//
-//
-//
-////            if (request.getTienMat() != null && request.getTienMat().compareTo(BigDecimal.ZERO) > 0) {
-////                BigDecimal totalMoney = bill.getTotalMoney() != null ? bill.getTotalMoney() : BigDecimal.ZERO;
-////                BigDecimal moneyShip = bill.getMoneyShip() != null ? bill.getMoneyShip() : BigDecimal.ZERO;
-////                paymentMethod.setTotalMoney(totalMoney.add(moneyShip));
-////                paymentMethod.setNote("Đã thanh toán tiền mặt tại quầy!");
-////                paymentMethod.setMethod(PaymentMethodConstant.TIEN_MAT);
-////                paymentMethodRepository.save(paymentMethod);
-////
-////                BillHistory historyPaid = new BillHistory();
-////                historyPaid.setBill(bill);
-////                historyPaid.setNote("Đã thanh toán tại quầy!");
-////                historyPaid.setStatus(BillStatusConstant.XAC_NHAN_THONG_TIN_THANH_TOAN);
-////                billHistoryRepository.save(historyPaid);
-////            }
-//
-//            else if (request.getPaymentMethod() == PaymentMethodConstant.CHUYEN_KHOAN) {
-//                // Thanh toán chuyển khoản tại quầy
-//                BigDecimal totalMoney = bill.getTotalMoney() != null ? bill.getTotalMoney() : BigDecimal.ZERO;
-//                BigDecimal moneyShip = bill.getMoneyShip() != null ? bill.getMoneyShip() : BigDecimal.ZERO;
-//                paymentMethod.setTotalMoney(totalMoney.add(moneyShip));
-//                paymentMethod.setNote("Đã chuyển khoản!");
-//                paymentMethod.setTradingCode(request.getTradingCode());
-//                paymentMethod.setMethod(PaymentMethodConstant.CHUYEN_KHOAN);
-//                paymentMethodRepository.save(paymentMethod);
-//
-//                BillHistory historyPaid = new BillHistory();
-//                historyPaid.setBill(bill);
-//                historyPaid.setNote("Đã xác nhận thông tin thanh toán!");
-//                historyPaid.setStatus(BillStatusConstant.XAC_NHAN_THONG_TIN_THANH_TOAN);
-//                billHistoryRepository.save(historyPaid);
-//            } else if (request.getPaymentMethod() == PaymentMethodConstant.TIEN_MAT_VA_CHUYEN_KHOAN) {
-//                // Thanh toán kết hợp tại quầy
-//                PaymentMethod paymentMethod1 = new PaymentMethod();
-//                paymentMethod1.setBill(bill);
-//                paymentMethod1.setTotalMoney(request.getTienMat() != null ? request.getTienMat() : BigDecimal.ZERO);
-//                paymentMethod1.setNote("Đã thanh toán tiền mặt!!");
-//                paymentMethod1.setMethod(PaymentMethodConstant.TIEN_MAT);
-//                paymentMethod1.setType(PaymentMethodConstant.TIEN_KHACH_DUA);
-//                paymentMethodRepository.save(paymentMethod1);
-//
-//                paymentMethod.setTotalMoney(request.getTienChuyenKhoan() != null ? request.getTienChuyenKhoan() : BigDecimal.ZERO);
-//                paymentMethod.setTradingCode(request.getTradingCode());
-//                paymentMethod.setNote("Đã chuyển khoản!");
-//                paymentMethod.setMethod(PaymentMethodConstant.CHUYEN_KHOAN);
-//                paymentMethodRepository.save(paymentMethod);
-//
-//                BillHistory historyPaid = new BillHistory();
-//                historyPaid.setBill(bill);
-//                historyPaid.setNote("Đã xác nhận thông tin thanh toán!");
-//                historyPaid.setStatus(BillStatusConstant.XAC_NHAN_THONG_TIN_THANH_TOAN);
-//                billHistoryRepository.save(historyPaid);
-//            }
-//        }
-//
-//        // Lưu lịch sử và hóa đơn
-//        billHistoryRepository.save(history);
-//        return billRepository.save(bill);
-//    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -436,7 +199,6 @@ public class BillServiceImpl implements BillService {
                             shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() +
                             "] không đủ số lượng để giao!");
                 }
-                shoeDetail.setQuantity(shoeDetail.getQuantity() - x.getQuantity());
                 sanPhamChiTietRepository.save(shoeDetail);
             }
 
@@ -607,6 +369,7 @@ public class BillServiceImpl implements BillService {
             case BillStatusConstant.XAC_NHAN_THONG_TIN_THANH_TOAN: return "Đã thanh toán";
             case BillStatusConstant.CHO_GIAO_HANG: return "Chờ giao hàng";
             case BillStatusConstant.DANG_GIAO_HANG: return "Đang giao hàng";
+            case BillStatusConstant.DA_GIAO_HANG: return "Đã giao hàng";
             case BillStatusConstant.HOAN_THANH: return "Hoàn thành";
             case BillStatusConstant.DA_HUY: return "Đã hủy";
             default: return "Đã thanh toán";
@@ -650,162 +413,11 @@ public class BillServiceImpl implements BillService {
         return billSave;
     }
 
-//    public Bill changeStatus(Long id, String note, Boolean isCancel) {
-//        Bill bill = billRepository.findById(id).get();
-//        BillHistory history = new BillHistory();
-//        history.setBill(bill);
-//        history.setNote(note);
-//
-//        List<PaymentMethod> paymentMethods = paymentMethodRepository.findByBillIdAndType(bill.getId(), PaymentMethodConstant.TIEN_KHACH_DUA);
-//        Double totalPayment = 0.0;
-//        for (PaymentMethod x : paymentMethods) {
-//            totalPayment += x.getTotalMoney() != null ? x.getTotalMoney().doubleValue() : 0.0;
-//        }
-//
-//        if (isCancel) {
-//            for (BillDetail x : billDetailRepository.findByBillId(bill.getId())) {
-//                SanPhamChiTiet shoeDetail = x.getShoeDetail();
-//                shoeDetail.setQuantity(shoeDetail.getQuantity() + x.getQuantity());
-//                sanPhamChiTietRepository.save(shoeDetail);
-//            }
-//            if (bill.getVoucher() != null) {
-//                Voucher voucher = bill.getVoucher();
-//                voucher.setQuantity(voucher.getQuantity() + 1);
-//                voucherRepository.save(voucher);
-//            }
-//            history.setStatus(BillStatusConstant.DA_HUY);
-//            bill.setStatus(BillStatusConstant.DA_HUY);
-//        } else {
-//            BigDecimal totalMoney = bill.getTotalMoney() != null ? bill.getTotalMoney() : BigDecimal.ZERO;
-//            BigDecimal moneyShip = bill.getMoneyShip() != null ? bill.getMoneyShip() : BigDecimal.ZERO;
-//            if (bill.getStatus() == BillStatusConstant.CHO_THANH_TOAN) {
-//                if (BigDecimal.valueOf(totalPayment).compareTo(totalMoney.add(moneyShip)) < 0) {
-//                    throw new NgoaiLe("Vui lòng hoàn tất thanh toán!");
-//                } else {
-//                    history.setStatus(BillStatusConstant.HOAN_THANH);
-//                    bill.setStatus(BillStatusConstant.HOAN_THANH);
-//                }
-//            } else {
-//                if (bill.getStatus() == BillStatusConstant.CHO_XAC_NHAN) {
-//                    history.setStatus(BillStatusConstant.CHO_GIAO_HANG);
-//                    bill.setStatus(BillStatusConstant.CHO_GIAO_HANG);
-//                } else {
-//                    if (bill.getStatus() == BillStatusConstant.DANG_GIAO_HANG) {
-//                        if (BigDecimal.valueOf(totalPayment).compareTo(totalMoney.add(moneyShip)) < 0) {
-//                            throw new NgoaiLe("Vui lòng hoàn tất thanh toán!");
-//                        }
-//                    }
-//                    bill.setStatus(bill.getStatus() + 1);
-//                    history.setStatus(bill.getStatus());
-//                }
-//            }
-//        }
-//        if (bill.getStatus() == BillStatusConstant.HOAN_THANH) {
-//            bill.setReceiveDate(System.currentTimeMillis());
-//        } else if (bill.getStatus() == BillStatusConstant.DANG_GIAO_HANG) {
-//            bill.setShipDate(new Date());
-//        } else if (bill.getStatus() == BillStatusConstant.XAC_NHAN_THONG_TIN_THANH_TOAN) {
-//            bill.setPayDate(new Date());
-//        }
-//
-//        Bill billSave = billRepository.save(bill);
-//        if (billSave != null) {
-//            billHistoryRepository.save(history);
-//        }
-//        return billSave;
-//    }
-
-
-//    @Transactional(rollbackFor = Exception.class)
-//    public Bill changeStatus(Long id, String note, Boolean isCancel) {
-//        Bill bill = billRepository.findById(id)
-//                .orElseThrow(() -> new NgoaiLe("Hóa đơn không tồn tại"));
-//
-//        BillHistory history = new BillHistory();
-//        history.setBill(bill);
-//        history.setNote(note);
-//
-//        List<PaymentMethod> paymentMethods = paymentMethodRepository.findByBillIdAndType(bill.getId(), PaymentMethodConstant.TIEN_KHACH_DUA);
-//        Double totalPayment = 0.0;
-//        for (PaymentMethod x : paymentMethods) {
-//            totalPayment += x.getTotalMoney() != null ? x.getTotalMoney().doubleValue() : 0.0;
-//        }
-//
-//        if (isCancel) {
-//            // Return product quantities to inventory
-//            for (BillDetail x : billDetailRepository.findByBillId(bill.getId())) {
-//                SanPhamChiTiet shoeDetail = x.getShoeDetail();
-//                shoeDetail.setQuantity(shoeDetail.getQuantity() + x.getQuantity());
-//                sanPhamChiTietRepository.save(shoeDetail);
-//            }
-//
-//            // Only return voucher if bill is in CHO_XAC_NHAN status
-//            if (bill.getStatus() == BillStatusConstant.CHO_XAC_NHAN && bill.getVoucher() != null) {
-//                Voucher voucher = bill.getVoucher();
-//                voucher.setQuantity(voucher.getQuantity() + 1);
-//                voucherRepository.save(voucher);
-//            }
-//
-//            history.setStatus(BillStatusConstant.DA_HUY);
-//            bill.setStatus(BillStatusConstant.DA_HUY);
-//        } else {
-//            BigDecimal totalMoney = bill.getTotalMoney() != null ? bill.getTotalMoney() : BigDecimal.ZERO;
-//            BigDecimal moneyShip = bill.getMoneyShip() != null ? bill.getMoneyShip() : BigDecimal.ZERO;
-//
-//            if (bill.getStatus() == BillStatusConstant.CHO_THANH_TOAN) {
-//                if (BigDecimal.valueOf(totalPayment).compareTo(totalMoney.add(moneyShip)) < 0) {
-//                    throw new NgoaiLe("Vui lòng hoàn tất thanh toán!");
-//                } else {
-//                    history.setStatus(BillStatusConstant.HOAN_THANH);
-//                    bill.setStatus(BillStatusConstant.HOAN_THANH);
-//                }
-//            } else if (bill.getStatus() == BillStatusConstant.CHO_XAC_NHAN) {
-//                // Deduct product quantities when moving to DA_XAC_NHAN
-//                for (BillDetail x : billDetailRepository.findByBillId(bill.getId())) {
-//                    SanPhamChiTiet shoeDetail = x.getShoeDetail();
-//                    if (shoeDetail.getQuantity() < x.getQuantity()) {
-//                        throw new NgoaiLe("Sản phẩm " + shoeDetail.getShoe().getName() + " [" +
-//                                shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() +
-//                                "] không đủ số lượng để giao!");
-//                    }
-//                    shoeDetail.setQuantity(shoeDetail.getQuantity() - x.getQuantity());
-//                    sanPhamChiTietRepository.save(shoeDetail);
-//                }
-//                history.setStatus(BillStatusConstant.DA_XAC_NHAN);
-//                bill.setStatus(BillStatusConstant.DA_XAC_NHAN);
-//            } else if (bill.getStatus() == BillStatusConstant.DA_XAC_NHAN) {
-//                history.setStatus(BillStatusConstant.CHO_GIAO_HANG);
-//                bill.setStatus(BillStatusConstant.CHO_GIAO_HANG);
-//            } else {
-//                if (bill.getStatus() == BillStatusConstant.DANG_GIAO_HANG) {
-//                    if (BigDecimal.valueOf(totalPayment).compareTo(totalMoney.add(moneyShip)) < 0) {
-//                        throw new NgoaiLe("Vui lòng hoàn tất thanh toán!");
-//                    }
-//                }
-//                bill.setStatus(bill.getStatus() + 1);
-//                history.setStatus(bill.getStatus());
-//            }
-//        }
-//
-//        // Update relevant dates based on status
-//        if (bill.getStatus() == BillStatusConstant.HOAN_THANH) {
-//            bill.setReceiveDate(System.currentTimeMillis());
-//        } else if (bill.getStatus() == BillStatusConstant.DANG_GIAO_HANG) {
-//            bill.setShipDate(new Date());
-//        } else if (bill.getStatus() == BillStatusConstant.XAC_NHAN_THONG_TIN_THANH_TOAN) {
-//            bill.setPayDate(new Date());
-//        }
-//
-//        Bill billSave = billRepository.save(bill);
-//        if (billSave != null) {
-//            billHistoryRepository.save(history);
-//        }
-//        return billSave;
-//    }
 
 
     @Transactional(rollbackFor = Exception.class)
-    public Bill changeStatus(Long id, String note, Boolean isCancel) {
+    public Bill changeStatus(Long id, String note, Boolean isCancel, Boolean isVnpay) {
+        String autoGeneratedCode = "VNP" + System.currentTimeMillis();
         Bill bill = billRepository.findById(id)
                 .orElseThrow(() -> new NgoaiLe("Hóa đơn không tồn tại"));
 
@@ -821,21 +433,32 @@ public class BillServiceImpl implements BillService {
 
         if (isCancel) {
             if (bill.getStatus() == BillStatusConstant.CHO_XAC_NHAN) {
-                // Only restore voucher at CHO_XAC_NHAN status
-//                if (bill.getVoucher() != null) {
-//                    Voucher voucher = bill.getVoucher();
-//                    voucher.setQuantity(voucher.getQuantity() + 1);
-//                    voucherRepository.save(voucher);
-//                }
-                // Do NOT restore product quantities at CHO_XAC_NHAN
+                // No product quantity restoration at CHO_XAC_NHAN
             } else {
-                // Restore product quantities for DA_XAC_NHAN or later statuses
                 for (BillDetail x : billDetailRepository.findByBillId(bill.getId())) {
                     SanPhamChiTiet shoeDetail = x.getShoeDetail();
                     shoeDetail.setQuantity(shoeDetail.getQuantity() + x.getQuantity());
                     sanPhamChiTietRepository.save(shoeDetail);
                 }
-                // Do NOT restore voucher at DA_XAC_NHAN or later
+            }
+
+            if (isVnpay != null && isVnpay) {
+                BigDecimal totalMoney = bill.getTotalMoney() != null ? bill.getTotalMoney() : BigDecimal.ZERO;
+                BigDecimal moneyShip = bill.getMoneyShip() != null ? bill.getMoneyShip() : BigDecimal.ZERO;
+//                BigDecimal refundAmount = totalMoney();
+
+                PaymentMethod refundPayment = new PaymentMethod();
+                refundPayment.setBill(bill);
+                refundPayment.setType(PaymentMethodConstant.TIEN_HOAN);
+                refundPayment.setMethod(PaymentMethodConstant.CHUYEN_KHOAN);
+                refundPayment.setTotalMoney(totalMoney);
+                refundPayment.setNote("Hoàn tiền qua VNPAY do hủy đơn hàng");
+                refundPayment.setTradingCode(autoGeneratedCode);
+                paymentMethodRepository.save(refundPayment);
+
+                history.setNote(note + ". Đã hoàn tiền " + totalMoney + " VNĐ qua VNPAY");
+            } else {
+                history.setNote(note);
             }
 
             history.setStatus(BillStatusConstant.DA_HUY);
@@ -847,31 +470,23 @@ public class BillServiceImpl implements BillService {
             if (bill.getStatus() == BillStatusConstant.CHO_THANH_TOAN) {
                 if (BigDecimal.valueOf(totalPayment).compareTo(totalMoney.add(moneyShip)) < 0) {
                     throw new NgoaiLe("Vui lòng hoàn tất thanh toán!");
-                } else {
-                    history.setStatus(BillStatusConstant.HOAN_THANH);
-                    bill.setStatus(BillStatusConstant.HOAN_THANH);
                 }
+                history.setStatus(BillStatusConstant.HOAN_THANH);
+                bill.setStatus(BillStatusConstant.HOAN_THANH);
             } else if (bill.getStatus() == BillStatusConstant.CHO_XAC_NHAN) {
-                // Check product availability and status when moving to DA_XAC_NHAN
                 for (BillDetail x : billDetailRepository.findByBillId(bill.getId())) {
                     SanPhamChiTiet shoeDetail = x.getShoeDetail();
                     SanPham sanPham = shoeDetail.getShoe();
-
-                    // Check if product is discontinued
                     if (sanPham.getDeleted()) {
                         throw new NgoaiLe("Không thể xác nhận đơn hàng! Sản phẩm " + sanPham.getName() +
                                 " [" + shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() +
                                 "] đã ngừng bán.");
                     }
-
-                    // Check if product is out of stock
                     if (shoeDetail.getQuantity() < x.getQuantity()) {
                         throw new NgoaiLe("Không thể xác nhận đơn hàng! Sản phẩm " + sanPham.getName() +
                                 " [" + shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() +
                                 "] chỉ còn " + shoeDetail.getQuantity() + " trong kho.");
                     }
-
-                    // Deduct inventory
                     shoeDetail.setQuantity(shoeDetail.getQuantity() - x.getQuantity());
                     sanPhamChiTietRepository.save(shoeDetail);
                 }
@@ -880,18 +495,24 @@ public class BillServiceImpl implements BillService {
             } else if (bill.getStatus() == BillStatusConstant.DA_XAC_NHAN) {
                 history.setStatus(BillStatusConstant.CHO_GIAO_HANG);
                 bill.setStatus(BillStatusConstant.CHO_GIAO_HANG);
-            } else {
-                if (bill.getStatus() == BillStatusConstant.DANG_GIAO_HANG) {
-                    if (BigDecimal.valueOf(totalPayment).compareTo(totalMoney.add(moneyShip)) < 0) {
-                        throw new NgoaiLe("Vui lòng hoàn tất thanh toán!");
-                    }
+            } else if (bill.getStatus() == BillStatusConstant.CHO_GIAO_HANG) {
+                history.setStatus(BillStatusConstant.DANG_GIAO_HANG);
+                bill.setStatus(BillStatusConstant.DANG_GIAO_HANG);
+            } else if (bill.getStatus() == BillStatusConstant.DANG_GIAO_HANG) {
+                if (BigDecimal.valueOf(totalPayment).compareTo(totalMoney.add(moneyShip)) < 0) {
+                    throw new NgoaiLe("Vui lòng hoàn tất thanh toán!");
                 }
-                bill.setStatus(bill.getStatus() + 1);
-                history.setStatus(bill.getStatus());
+                history.setStatus(BillStatusConstant.DA_GIAO_HANG);
+                bill.setStatus(BillStatusConstant.DA_GIAO_HANG);
+            } else if (bill.getStatus() == BillStatusConstant.DA_GIAO_HANG) {
+                if (BigDecimal.valueOf(totalPayment).compareTo(totalMoney.add(moneyShip)) < 0) {
+                    throw new NgoaiLe("Vui lòng hoàn tất thanh toán!");
+                }
+                history.setStatus(BillStatusConstant.HOAN_THANH);
+                bill.setStatus(BillStatusConstant.HOAN_THANH);
             }
         }
 
-        // Update relevant dates based on status
         if (bill.getStatus() == BillStatusConstant.HOAN_THANH) {
             bill.setReceiveDate(System.currentTimeMillis());
         } else if (bill.getStatus() == BillStatusConstant.DANG_GIAO_HANG) {
@@ -904,8 +525,72 @@ public class BillServiceImpl implements BillService {
         if (billSave != null) {
             billHistoryRepository.save(history);
         }
+
+        if (isCancel) {
+            if (bill.getCustomer() != null) {
+                Notification notification = new Notification();
+                notification.setTitle("Đơn hàng của bạn đã bị hủy");
+                notification.setContent("Xin chào " + bill.getCustomer().getName() + ", đơn hàng với mã " + bill.getCode() + " đã bị hủy với lý do: " + note + ". " + (isVnpay ? "Số tiền đã được hoàn lại qua VNPAY." : ""));
+                notification.setAccount(bill.getCustomer());
+                notification.setType(NotificationType.CHUA_DOC);
+                notificationRepository.save(notification);
+            }
+
+            List<Account> employees = accountRepository.findByAccountRoles(AccountRoles.ROLE_EMLOYEE);
+            List<Account> admins = accountRepository.findByAccountRoles(AccountRoles.ROLE_ADMIN);
+            List<Account> recipients = new ArrayList<>();
+            recipients.addAll(employees);
+            recipients.addAll(admins);
+
+            for (Account account : recipients) {
+                Notification notification = new Notification();
+                notification.setTitle("Đơn hàng đã bị hủy");
+                notification.setContent("Đơn hàng với mã " + bill.getCode() + " của khách hàng " + bill.getCustomerName() + " đã bị hủy với lý do: " + note + ". " + (isVnpay ? "Số tiền đã được hoàn lại qua VNPAY." : ""));
+                notification.setAccount(account);
+                notification.setType(NotificationType.CHUA_DOC);
+                notificationRepository.save(notification);
+            }
+        }
+
         return billSave;
     }
+
+//    private String buildCancellationEmailBody(Bill bill, String note, Boolean isVnpay) {
+//        try {
+//            String template = new String(Files.readAllBytes(Paths.get("src/main/resources/templates/cancellationTemplate.html")));
+//
+//            String address = bill.getAddress() != null && bill.getAddress().contains("##") ?
+//                    formatAddress(bill.getAddress()) : "Không có địa chỉ";
+//
+//            StringBuilder productRows = new StringBuilder();
+//            List<BillDetail> billDetails = billDetailRepository.findByBillId(bill.getId());
+//            for (BillDetail detail : billDetails) {
+//                productRows.append("<tr>")
+//                        .append("<td>").append(detail.getShoeDetail().getShoe().getName()).append(" [")
+//                        .append(detail.getShoeDetail().getColor().getName()).append(" - ")
+//                        .append(detail.getShoeDetail().getSize().getName()).append("]</td>")
+//                        .append("<td>").append(detail.getQuantity()).append("</td>")
+//                        .append("<td>").append(detail.getPrice()).append(" VNĐ</td>")
+//                        .append("<td>").append(detail.getPrice().multiply(new BigDecimal(detail.getQuantity()))).append(" VNĐ</td>")
+//                        .append("</tr>");
+//            }
+//
+//            String refundSection = isVnpay != null && isVnpay ?
+//                    "<p><strong>Thông tin hoàn tiền:</strong> Số tiền " + bill.getTotalMoney().add(bill.getMoneyShip()) + " VNĐ đã được hoàn lại qua VNPAY.</p>" : "";
+//
+//            return template
+//                    .replace("${billCode}", bill.getCode())
+//                    .replace("${customerName}", bill.getCustomerName())
+//                    .replace("${address}", address)
+//                    .replace("${productRows}", productRows.toString())
+//                    .replace("${cancelReason}", note)
+//                    .replace("${refundSection}", refundSection)
+//                    .replace("${total}", bill.getTotalMoney().add(bill.getMoneyShip()).toString());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return "Lỗi khi tạo email hủy đơn: " + e.getMessage();
+//        }
+//    }
     public Bill changeInfoCustomer(Long id, BillRequest request) {
         Bill bill = billRepository.findById(id).orElse(null);
         bill.setCustomerName(request.getCustomerName());
@@ -924,76 +609,163 @@ public class BillServiceImpl implements BillService {
 
 
 
-//    @Override
-//    @Transactional(rollbackFor = NgoaiLe.class)
-//    public ResponseObject createBillClient(BillClientRequest request) {
-//        Bill bill = new Bill();
-//        BillHistory billHistory = new BillHistory();
-//        if (request.getVoucher() != null) {
-//            int updatedRows = voucherRepository.decreaseQuantityIfAvailable(request.getVoucher());
-//            if (updatedRows == 0) {
-//                throw new NgoaiLe("Voucher đã hết số lượng hoặc không tồn tại!");
-//            }
-//        }
-//        if (request.getAccount() != null) {
-//            bill.setCustomer(accountRepository.findById(request.getAccount()).orElse(null));
-//        }
-//        bill.setStatus(BillStatusConstant.CHO_XAC_NHAN);
-//        bill.setCode(this.genBillCode());
-//        bill.setType(TyperOrderConstant.GIAO_HANG);
-//        bill.setNote(request.getNote());
-//        bill.setPhoneNumber(request.getPhoneNumber());
-//        bill.setCustomerName(request.getCustomerName());
-//        bill.setAddress(request.getSpecificAddress() + "##" + request.getWard() + "##" + request.getDistrict() + "##" + request.getProvince());
-//        bill.setMoneyShip(request.getMoneyShip());
-//        bill.setMoneyReduce(request.getMoneyReduce());
-//        bill.setTotalMoney(request.getTotalMoney());
-//        if(request.getVoucher() != null){
-//            Voucher voucher = voucherRepository.findById(request.getVoucher()).get();
-//            voucher.setQuantity(voucher.getQuantity()-1);
-//            voucherRepository.save(voucher);
-//            bill.setVoucher(voucher);
-//        }
-//
-//        Bill billSave = billRepository.save(bill);
-//        billHistory.setBill(billSave);
-//        billHistory.setStatus(billSave.getStatus());
-//        billHistory.setNote("Chờ xác nhận");
-//        billHistoryRepository.save(billHistory);
-//
-//        for (CartClientRequest x : request.getCarts()) {
-//            SanPhamChiTiet shoeDetail = sanPhamChiTietRepository.findById(x.getId()).get();
-//            BillDetail billDetail = new BillDetail();
-//            billDetail.setBill(bill);
-//            billDetail.setQuantity(x.getQuantity());
-//            billDetail.setShoeDetail(shoeDetail);
-//            billDetail.setPrice(shoeDetail.getPrice());
-//            billDetail.setStatus(false);
-//            billDetailRepository.save(billDetail);
-//            if(shoeDetail.getQuantity() <= 0){
-//                throw new NgoaiLe("Sản phẩm " + shoeDetail.getShoe().getName()
-//                        + " [" + shoeDetail.getColor().getName()+"-" + shoeDetail.getSize().getName()+"] đã hết hàng!");
-//            }
-//            if(shoeDetail.getQuantity() < x.getQuantity()){
-//                throw new NgoaiLe(shoeDetail.getShoe().getName()
-//                        + " [" + shoeDetail.getColor().getName()+"-" + shoeDetail.getSize().getName()+"] chỉ được mua tối đa " + shoeDetail.getQuantity() + " sản phẩm!");
-//            }
+    @Override
+    @Transactional(rollbackFor = NgoaiLe.class)
+    public ResponseObject createBillClient(BillClientRequest request) {
+        // Check if total money exceeds 100 million VND
+        BigDecimal maxOrderLimit = new BigDecimal("50000000");
+        if (request.getTotalMoney().compareTo(maxOrderLimit) > 0) {
+            throw new NgoaiLe("Tổng giá trị đơn hàng không được vượt quá 50,000,000 VNĐ!, Vui lòng liên hệ sdt 0335867600 để được hỗ trợ");
+        }
+
+        Bill bill = new Bill();
+        BillHistory billHistory = new BillHistory();
+
+        // Voucher handling
+        // Voucher handling
+        if (request.getVoucher() != null) {
+            Voucher voucher = voucherRepository.findById(request.getVoucher())
+                    .orElseThrow(() -> new NgoaiLe("Voucher không tồn tại!"));
+
+
+
+            // Check voucher status
+            if (voucher.getStatus() == 0) {
+                throw new NgoaiLe("Voucher " + voucher.getCode() + " chưa bắt đầu! Hiệu lực từ: " + voucher.getStartDate());
+            }
+            if (voucher.getStatus() == 2) {
+                throw new NgoaiLe("Voucher " + voucher.getCode() + " đã kết thúc! Hết hạn vào: " + voucher.getEndDate());
+            }
+
+            // Check and decrease quantity
+            int updatedRows = voucherRepository.decreaseQuantityIfAvailable(request.getVoucher());
+            if (updatedRows == 0) {
+                throw new NgoaiLe("Voucher " + voucher.getCode() + " đã hết số lượng!");
+            }
+        }
+
+        // Set bill details
+        if (request.getAccount() != null) {
+            bill.setCustomer(accountRepository.findById(request.getAccount()).orElse(null));
+        }
+        bill.setStatus(BillStatusConstant.CHO_XAC_NHAN);
+        bill.setCode(this.genBillCode());
+        bill.setType(TyperOrderConstant.GIAO_HANG);
+        bill.setNote(request.getNote());
+        bill.setPhoneNumber(request.getPhoneNumber());
+        bill.setCustomerName(request.getCustomerName());
+        bill.setAddress(request.getSpecificAddress() + "##" + request.getWard() + "##" + request.getDistrict() + "##" + request.getProvince());
+        bill.setMoneyShip(request.getMoneyShip());
+        bill.setMoneyReduce(request.getMoneyReduce());
+        bill.setTotalMoney(request.getTotalMoney());
+        if (request.getVoucher() != null) {
+            Voucher voucher = voucherRepository.findById(request.getVoucher()).get();
+            bill.setVoucher(voucher);
+        }
+
+        Bill billSave = billRepository.save(bill);
+
+        // Save bill history
+        billHistory.setBill(billSave);
+        billHistory.setStatus(billSave.getStatus());
+        billHistory.setNote("Chờ xác nhận");
+        billHistoryRepository.save(billHistory);
+
+        // Save bill details and update product quantities
+        for (CartClientRequest x : request.getCarts()) {
+            SanPhamChiTiet shoeDetail = sanPhamChiTietRepository.findById(x.getId())
+                    .orElseThrow(() -> new NgoaiLe("Không tìm thấy sản phẩm chi tiết với ID: " + x.getId()));
+
+            // Kiểm tra sản phẩm có bị ngừng bán không
+            SanPham sanPham = shoeDetail.getShoe();
+            if (sanPham.getDeleted()) {
+                throw new NgoaiLe("Sản phẩm " + sanPham.getName() + " [" + shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() + "] đã ngừng bán!");
+            }
+
+            // Kiểm tra số lượng tồn kho
+            if (shoeDetail.getQuantity() <= 0) {
+                throw new NgoaiLe("Sản phẩm " + sanPham.getName() + " [" + shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() + "] đã hết hàng!");
+            }
+            if (shoeDetail.getQuantity() < x.getQuantity()) {
+                throw new NgoaiLe(sanPham.getName() + " [" + shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() + "] chỉ được mua tối đa " + shoeDetail.getQuantity() + " sản phẩm!");
+            }
+
+            // Xử lý khuyến mãi
+            KhuyenMaiChiTiet khuyenMaiChiTiet = khuyenMaiChiTietRepository.findByShoeDetailCode(shoeDetail.getCode());
+            BigDecimal price;
+            Float discountPercent = null;
+            BigDecimal discountValue = null;
+            LocalDateTime now = LocalDateTime.now();
+            if (khuyenMaiChiTiet != null && khuyenMaiChiTiet.getPromotion() != null) {
+                KhuyenMai km = khuyenMaiChiTiet.getPromotion();
+                if (now.isAfter(km.getStartDate()) && now.isBefore(km.getEndDate())) {
+                    price = khuyenMaiChiTiet.getPromotionPrice();
+                    discountPercent = km.getValue();
+                    discountValue = khuyenMaiChiTiet.getPromotionPrice();
+                } else {
+                    price = shoeDetail.getPrice();
+                }
+            } else {
+                price = shoeDetail.getPrice();
+            }
+
+            // Tạo BillDetail
+            BillDetail billDetail = new BillDetail();
+            billDetail.setBill(billSave);
+            billDetail.setQuantity(x.getQuantity());
+            billDetail.setShoeDetail(shoeDetail);
+            billDetail.setPrice(price);
+            billDetail.setDiscountPercent(discountPercent);
+            billDetail.setDiscountValue(discountValue);
+            billDetail.setStatus(true); // Đặt status là true để đồng nhất với logic admin
+            billDetailRepository.save(billDetail);
+
+            // Cập nhật số lượng tồn kho
 //            shoeDetail.setQuantity(shoeDetail.getQuantity() - x.getQuantity());
-//            sanPhamChiTietRepository.save(shoeDetail);
-//        }
-////        if (bill.getCustomer() != null) {
-////            Account account = bill.getCustomer();
-////            Notification notification = new Notification();
-////            notification.setTitle("Đơn hàng của bạn đã được đặt");
-////            notification.setContent("Xin chào " + account.getName() + ", đơn hàng với mã vận đơn " +
-////                    bill.getCode() + " đã được hệ thống ghi nhận và đang chờ nhân viên xác nhận. " +
-////                    "Cảm ơn bạn đã dành thời gian cho NiceShoes!");
-////            notification.setAccount(account);
-////            notification.setType(NotificationType.CHUA_DOC);
-////            notificationRepository.save(notification);
-////        }
-//        return new ResponseObject(bill);
-//    }
+            sanPhamChiTietRepository.save(shoeDetail);
+        }
+
+        // Cập nhật tổng tiền hóa đơn
+        updateBillTotals(billSave);
+
+        // Send email notification
+        String email = bill.getCustomer() != null ? bill.getCustomer().getEmail() : request.getEmail();
+        if (email != null && !email.isEmpty()) {
+            String emailSubject = "Thông tin đơn hàng - T&T SPORT";
+            String emailBody = buildClientEmailBody(billSave);
+            mailUtils.sendEmail(email, emailSubject, emailBody);
+        }
+
+        // Send notification to all employees
+        List<Account> employees = accountRepository.findByAccountRoles(AccountRoles.ROLE_EMLOYEE);
+        List<Account> admins = accountRepository.findByAccountRoles(AccountRoles.ROLE_ADMIN);
+
+        List<Account> recipients = new ArrayList<>();
+        recipients.addAll(employees);
+        recipients.addAll(admins);
+
+        for (Account account : recipients) {
+            Notification notification = new Notification();
+            notification.setTitle("Đơn hàng mới được đặt");
+            notification.setContent("Đơn hàng với mã " + billSave.getCode() + " vừa được đặt bởi " + billSave.getCustomerName() + ". Vui lòng kiểm tra và xác nhận.");
+            notification.setAccount(account);
+            notification.setType(NotificationType.CHUA_DOC);
+            notificationRepository.save(notification);
+        }
+
+        // Send notification to customer
+        if (bill.getCustomer() != null) {
+            Account account = bill.getCustomer();
+            Notification notification = new Notification();
+            notification.setTitle("Đơn hàng của bạn đã được đặt");
+            notification.setContent("Xin chào " + account.getName() + ", đơn hàng với mã vận đơn " + bill.getCode() + " đã được hệ thống ghi nhận và đang chờ nhân viên xác nhận. Cảm ơn bạn đã dành thời gian cho T&T SPORT!");
+            notification.setAccount(account);
+            notification.setType(NotificationType.CHUA_DOC);
+            notificationRepository.save(notification);
+        }
+
+        return new ResponseObject(billSave);
+    }
 
 
 
@@ -1061,77 +833,7 @@ public class BillServiceImpl implements BillService {
         return rawAddress;
     }
 
-//    @Override
-//    @Transactional(rollbackFor = NgoaiLe.class)
-//    public ResponseObject createBillClientVnpay(BillClientRequest request, String code) {
-//        Bill bill = new Bill();
-//        BillHistory billHistory = new BillHistory();
-//        if (request.getAccount() != null) {
-//            bill.setCustomer(accountRepository.findById(request.getAccount()).orElse(null));
-//        }
-//        bill.setStatus(BillStatusConstant.CHO_XAC_NHAN);
-//        if(request.getVoucher() != null){
-//            Voucher voucher = voucherRepository.findById(request.getVoucher()).get();
-//            voucher.setQuantity(voucher.getQuantity()-1);
-//            voucherRepository.save(voucher);
-//            bill.setVoucher(voucher);
-//        }
-//        bill.setCode(this.genBillCode());
-//        bill.setType(TyperOrderConstant.GIAO_HANG);
-//        bill.setNote(request.getNote());
-//        bill.setPhoneNumber(request.getPhoneNumber());
-//        bill.setCustomerName(request.getCustomerName());
-//        bill.setAddress(request.getSpecificAddress() + "##" + request.getWard() + "##" + request.getDistrict() + "##" + request.getProvince());
-//        bill.setMoneyShip(request.getMoneyShip());
-//        bill.setMoneyReduce(request.getMoneyReduce());
-//        bill.setTotalMoney(request.getTotalMoney());
-//        if (request.getVoucher() != null) {
-//            bill.setVoucher(voucherRepository.findById(request.getVoucher()).get());
-//        }
-//
-//        Bill billSave = billRepository.save(bill);
-//        billHistory.setBill(billSave);
-//        billHistory.setStatus(billSave.getStatus());
-//        billHistory.setNote("Chờ xác nhận");
-//        billHistoryRepository.save(billHistory);
-//
-//        PaymentMethod paymentMethod = new PaymentMethod();
-//        paymentMethod.setBill(billSave);
-//        paymentMethod.setType(PaymentMethodConstant.TIEN_KHACH_DUA);
-//        paymentMethod.setMethod(PaymentMethodConstant.CHUYEN_KHOAN);
-//        paymentMethod.setTradingCode(code);
-//        paymentMethod.setTotalMoney(billSave.getTotalMoney().add(billSave.getMoneyShip()));
-//        paymentMethod.setNote("Đã thanh toán");
-//        paymentMethodRepository.save(paymentMethod);
-//
-//        for (CartClientRequest x : request.getCarts()) {
-//            SanPhamChiTiet shoeDetail = sanPhamChiTietRepository.findById(x.getId()).get();
-//            BillDetail billDetail = new BillDetail();
-//            billDetail.setBill(bill);
-//            billDetail.setQuantity(x.getQuantity());
-//            billDetail.setShoeDetail(shoeDetail);
-//            billDetail.setPrice(shoeDetail.getPrice());
-//            billDetail.setStatus(false);
-//            billDetailRepository.save(billDetail);
-//            shoeDetail.setQuantity(shoeDetail.getQuantity() - x.getQuantity());
-//            if(shoeDetail.getQuantity() < 0){
-//                throw new NgoaiLe("Sản phẩm này đã hết hàng!");
-//            }
-//            sanPhamChiTietRepository.save(shoeDetail);
-//        }
-////        if (bill.getCustomer() != null) {
-////            Account account = bill.getCustomer();
-////            Notification notification = new Notification();
-////            notification.setTitle("Đơn hàng của bạn đã được đặt");
-////            notification.setContent("Xin chào " + account.getName() + ", đơn hàng với mã vận đơn " +
-////                    bill.getCode() + " đã được hệ thống ghi nhận và đang chờ nhân viên xác nhận. " +
-////                    "Cảm ơn bạn đã dành thời gian cho NiceShoes!");
-////            notification.setAccount(account);
-////            notification.setType(NotificationType.CHUA_DOC);
-////            notificationRepository.save(notification);
-////        }
-//        return new ResponseObject(bill);
-//    }
+
 
     @Transactional(rollbackFor = NgoaiLe.class)
     public Bill updateVoucher(Long billId, Long newVoucherId) {
@@ -1211,4 +913,178 @@ public class BillServiceImpl implements BillService {
         return billRepository.statisticBillStatus();
     }
 
+
+    @Override
+    @Transactional(rollbackFor = NgoaiLe.class)
+    public ResponseObject createBillClientVnpay(BillClientRequest request, String code) {
+        // Check if total money exceeds 50 million VND
+        BigDecimal maxOrderLimit = new BigDecimal("50000000");
+        if (request.getTotalMoney() == null || request.getTotalMoney().compareTo(maxOrderLimit) > 0) {
+            throw new NgoaiLe("Tổng giá trị đơn hàng không được vượt quá 50,000,000 VNĐ! Vui lòng liên hệ sdt 0335867600 để được hỗ trợ");
+        }
+
+        Bill bill = new Bill();
+        BillHistory billHistory = new BillHistory();
+
+        // Voucher handling
+        if (request.getVoucher() != null) {
+            Voucher voucher = voucherRepository.findById(request.getVoucher())
+                    .orElseThrow(() -> new NgoaiLe("Voucher không tồn tại!"));
+
+            // Check voucher status
+            if (voucher.getStatus() == 0) {
+                throw new NgoaiLe("Voucher " + voucher.getCode() + " chưa bắt đầu! Hiệu lực từ: " + voucher.getStartDate());
+            }
+            if (voucher.getStatus() == 2) {
+                throw new NgoaiLe("Voucher " + voucher.getCode() + " đã kết thúc! Hết hạn vào: " + voucher.getEndDate());
+            }
+
+            // Check and decrease quantity
+            int updatedRows = voucherRepository.decreaseQuantityIfAvailable(request.getVoucher());
+            if (updatedRows == 0) {
+                throw new NgoaiLe("Voucher " + voucher.getCode() + " đã hết số lượng!");
+            }
+            bill.setVoucher(voucher); // Set voucher to bill
+        }
+
+        // Set bill details
+        if (request.getAccount() != null) {
+            bill.setCustomer(accountRepository.findById(request.getAccount()).orElse(null));
+        }
+        bill.setStatus(BillStatusConstant.CHO_XAC_NHAN);
+        bill.setCode(this.genBillCode());
+        bill.setType(TyperOrderConstant.GIAO_HANG);
+        bill.setNote(request.getNote());
+        bill.setPhoneNumber(request.getPhoneNumber());
+        bill.setCustomerName(request.getCustomerName());
+        bill.setAddress(request.getSpecificAddress() + "##" + request.getWard() + "##" + request.getDistrict() + "##" + request.getProvince());
+        bill.setMoneyShip(request.getMoneyShip() != null ? request.getMoneyShip() : BigDecimal.ZERO);
+        bill.setMoneyReduce(request.getMoneyReduce() != null ? request.getMoneyReduce() : BigDecimal.ZERO);
+        bill.setTotalMoney(request.getTotalMoney() != null ? request.getTotalMoney() : BigDecimal.ZERO);
+
+        // Save initial bill to generate ID
+        Bill billSave = billRepository.save(bill);
+
+        // Save bill history
+        billHistory.setBill(billSave);
+        billHistory.setStatus(billSave.getStatus());
+        billHistory.setNote("Chờ xác nhận");
+        billHistoryRepository.save(billHistory);
+
+        // Save payment method (VNPAY)
+        PaymentMethod paymentMethod = new PaymentMethod();
+        paymentMethod.setBill(billSave);
+        paymentMethod.setType(PaymentMethodConstant.TIEN_KHACH_DUA);
+        paymentMethod.setMethod(PaymentMethodConstant.CHUYEN_KHOAN);
+        paymentMethod.setTradingCode(code);
+        // Total money for payment will be set after updating totals
+        paymentMethod.setNote("Đã thanh toán qua VNPAY");
+        // paymentMethodRepository.save(paymentMethod); // Save after updating totals
+
+        // Save bill details and update product quantities
+        for (CartClientRequest x : request.getCarts()) {
+            SanPhamChiTiet shoeDetail = sanPhamChiTietRepository.findById(x.getId())
+                    .orElseThrow(() -> new NgoaiLe("Không tìm thấy sản phẩm chi tiết với ID: " + x.getId()));
+
+            // Kiểm tra sản phẩm có bị ngừng bán không
+            SanPham sanPham = shoeDetail.getShoe();
+            if (sanPham.getDeleted()) {
+                throw new NgoaiLe("Sản phẩm " + sanPham.getName() + " [" + shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() + "] đã ngừng bán!");
+            }
+
+            // Kiểm tra số lượng tồn kho
+            if (shoeDetail.getQuantity() <= 0) {
+                throw new NgoaiLe("Sản phẩm " + sanPham.getName() + " [" + shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() + "] đã hết hàng!");
+            }
+            if (shoeDetail.getQuantity() < x.getQuantity()) {
+                throw new NgoaiLe(sanPham.getName() + " [" + shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() + "] chỉ được mua tối đa " + shoeDetail.getQuantity() + " sản phẩm!");
+            }
+
+            // Xử lý khuyến mãi
+            KhuyenMaiChiTiet khuyenMaiChiTiet = khuyenMaiChiTietRepository.findByShoeDetailCode(shoeDetail.getCode());
+            BigDecimal price;
+            Float discountPercent = null;
+            BigDecimal discountValue = null;
+            LocalDateTime now = LocalDateTime.now();
+            if (khuyenMaiChiTiet != null && khuyenMaiChiTiet.getPromotion() != null) {
+                KhuyenMai km = khuyenMaiChiTiet.getPromotion();
+                if (now.isAfter(km.getStartDate()) && now.isBefore(km.getEndDate())) {
+                    price = khuyenMaiChiTiet.getPromotionPrice();
+                    discountPercent = km.getValue();
+                    discountValue = khuyenMaiChiTiet.getPromotionPrice();
+                } else {
+                    price = shoeDetail.getPrice();
+                }
+            } else {
+                price = shoeDetail.getPrice();
+            }
+
+            // Tạo BillDetail
+            BillDetail billDetail = new BillDetail();
+            billDetail.setBill(billSave);
+            billDetail.setQuantity(x.getQuantity());
+            billDetail.setShoeDetail(shoeDetail);
+            billDetail.setPrice(price);
+            billDetail.setDiscountPercent(discountPercent);
+            billDetail.setDiscountValue(discountValue);
+            billDetail.setStatus(false);
+            billDetailRepository.save(billDetail);
+
+            // Cập nhật số lượng tồn kho (uncomment if immediate deduction is intended)
+            // shoeDetail.setQuantity(shoeDetail.getQuantity() - x.getQuantity());
+            // sanPhamChiTietRepository.save(shoeDetail);
+        }
+
+        // Update bill totals to ensure correct totalMoney and moneyReduce
+        updateBillTotals(billSave);
+
+        // Update payment method with final total
+        paymentMethod.setTotalMoney(billSave.getTotalMoney().add(billSave.getMoneyShip()));
+        paymentMethodRepository.save(paymentMethod);
+
+        // Send notification to all employees
+        List<Account> employees = accountRepository.findByAccountRoles(AccountRoles.ROLE_EMLOYEE);
+        List<Account> admins = accountRepository.findByAccountRoles(AccountRoles.ROLE_ADMIN);
+        List<Account> recipients = new ArrayList<>();
+        recipients.addAll(employees);
+        recipients.addAll(admins);
+
+        for (Account account : recipients) {
+            Notification notification = new Notification();
+            notification.setTitle("Đơn hàng mới được đặt");
+            notification.setContent("Đơn hàng với mã " + billSave.getCode() + " vừa được đặt bởi " + billSave.getCustomerName() + ". Vui lòng kiểm tra và xác nhận.");
+            notification.setAccount(account);
+            notification.setType(NotificationType.CHUA_DOC);
+            notificationRepository.save(notification);
+        }
+
+        // Send email notification
+        String email = billSave.getCustomer() != null ? billSave.getCustomer().getEmail() : request.getEmail();
+        if (email != null && !email.isEmpty()) {
+            String emailSubject = "Thông tin đơn hàng - T&T SPORT (Thanh toán VNPAY)";
+            String emailBody = buildClientEmailBody(billSave);
+            mailUtils.sendEmail(email, emailSubject, emailBody);
+        }
+
+        // Send notification to customer
+        if (billSave.getCustomer() != null) {
+            Account account = billSave.getCustomer();
+            Notification notification = new Notification();
+            notification.setTitle("Đơn hàng của bạn đã được đặt");
+            notification.setContent("Xin chào " + account.getName() + ", đơn hàng với mã vận đơn " + billSave.getCode() + " đã được hệ thống ghi nhận và đang chờ nhân viên xác nhận. Cảm ơn bạn đã dành thời gian cho T&T SPORT!");
+            notification.setAccount(account);
+            notification.setType(NotificationType.CHUA_DOC);
+            notificationRepository.save(notification);
+        }
+
+        return new ResponseObject(billSave);
+    }
+
+
+
+
+    @Override
+    public List<StatisticBillStatus> statisticBillStatusByDateRange(LocalDateTime fromDate, LocalDateTime toDate) {
+        return billRepository.statisticBillStatusByDateRange(fromDate, toDate);
+    }
 }

@@ -506,13 +506,13 @@ function AddShoeModal({ onAddSuccess }) {
 
       <Modal
         title={`Thêm ${
-          propertyType === "xuatXu"
+          propertyType === "xuatxu"
             ? "Xuất xứ"
-            : propertyType === "thuongHieu"
+            : propertyType === "brand"
             ? "Thương hiệu"
-            : propertyType === "coAo"
+            : propertyType === "coao"
             ? "Cổ áo"
-            : propertyType === "tayAo"
+            : propertyType === "tayao"
             ? "Tay áo"
             : "Chất liệu"
         }`}

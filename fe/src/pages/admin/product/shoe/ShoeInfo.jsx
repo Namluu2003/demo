@@ -346,27 +346,27 @@ function ShoeInfo() {
         </>
       ),
     },
-     {
-      title: "Cân nặng",
-      dataIndex: "weight",
-      key: "weight",
-      render: (x, record) => (
-        <>
-          {selectedRowKeys.includes(record.id) ? (
-            <InputNumber
-              defaultValue={x}
-              formatter={(value) => ` ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-              parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-              controls={false}
-              min={0}
-              onChange={(value) => handleWeightChange(value, record.id)}
-            />
-          ) : (
-            <>{x}</>
-          )}
-        </>
-      ),
-    },
+    //  {
+    //   title: "Cân nặng",
+    //   dataIndex: "weight",
+    //   key: "weight",
+    //   render: (x, record) => (
+    //     <>
+    //       {selectedRowKeys.includes(record.id) ? (
+    //         <InputNumber
+    //           defaultValue={x}
+    //           formatter={(value) => ` ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+    //           parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+    //           controls={false}
+    //           min={0}
+    //           onChange={(value) => handleWeightChange(value, record.id)}
+    //         />
+    //       ) : (
+    //         <>{x}</>
+    //       )}
+    //     </>
+    //   ),
+    // },
     
     {
       title: "Trạng thái",

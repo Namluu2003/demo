@@ -26,10 +26,10 @@ SELECT
     s.id AS id,
     s.code AS code,
     s.name AS name,
-    ROW_NUMBER() OVER (ORDER BY s.ngay_tao DESC) AS indexs,
+    ROW_NUMBER() OVER (ORDER BY s.create_at DESC) AS indexs,
     GROUP_CONCAT(DISTINCT c.name) AS color,
     GROUP_CONCAT(DISTINCT sz.name) AS size,
-    (SELECT GROUP_CONCAT(DISTINCT img.name ORDER BY img.ngay_tao ASC)
+    (SELECT GROUP_CONCAT(DISTINCT img.name ORDER BY img.create_at ASC)
      FROM images img
      WHERE img.san_pham_id = s.id) AS images,
     s.mo_ta AS description,
@@ -74,7 +74,7 @@ WHERE (:#{#req.name} IS NULL OR s.name LIKE CONCAT('%', :#{#req.name}, '%'))
     AND (:#{#req.status} IS NULL OR s.deleted = :#{#req.status})
 GROUP BY s.id, s.code, s.name, s.mo_ta, xx.name, br.name, ca.name, ta.name, cl.name, s.deleted
 HAVING (:#{#req.minPrice} IS NULL OR :#{#req.maxPrice} IS NULL OR (MIN(sd.gia) BETWEEN :#{#req.minPrice} AND :#{#req.maxPrice}))
-ORDER BY s.ngay_tao DESC
+ORDER BY s.create_at DESC
 """,
             countQuery = """
 SELECT COUNT(DISTINCT s.id)
@@ -100,26 +100,31 @@ WHERE (:#{#req.name} IS NULL OR s.name LIKE CONCAT('%', :#{#req.name}, '%'))
 """, nativeQuery = true)
     Page<SanPhamResponse> getAllShoe(@Param("req") FindSanPhamRequest request, Pageable pageable);
 
-
     @Query(value = """
-            SELECT
-            s.id AS id,
-            s.code AS code,
-            s.name AS name,
-            ROW_NUMBER() OVER(ORDER BY s.ngay_tao DESC) AS indexs,
-            ct.name AS category,
-            br.name AS brand,
-            pm.id AS discount
-            FROM san_pham s
-            LEFT JOIN chi_tiet_san_pham sd ON s.id = sd.san_pham_id
-            LEFT JOIN danh_muc ct ON ct.id = s.danh_muc_id
-            LEFT JOIN thuong_hieu br ON br.id = s.thuong_hieu_id
-            LEFT JOIN de d ON d.id = s.de_id
-            LEFT JOIN khuyen_mai_chi_tiet pmd ON pmd.khuyen_mai_chi_tiet_id = sd.id
-            LEFT JOIN khuyen_mai pm ON pm.id = pmd.khuyen_mai_id
-            WHERE (:promotion IS NULL OR pm.id = :promotion)
-            """, nativeQuery = true)
-    List<SanPhamKhuyenMaiRespone> getAllShoeInPromotion(@Param("khuyen_mai") Long promotion);
+    SELECT
+        s.id AS id,
+        s.code AS code,
+        s.name AS name,
+        ROW_NUMBER() OVER(ORDER BY s.create_at DESC) AS indexs,
+        xx.name AS xuatXu,
+        br.name AS thuongHieu,
+        ca.name AS coAo,
+        ta.name AS tayAo,
+        cl.name AS chatLieu,
+        pm.id AS discount
+    FROM san_pham s
+    LEFT JOIN chi_tiet_san_pham sd ON s.id = sd.san_pham_id
+    LEFT JOIN xuat_xu xx ON xx.id = s.xuat_xu_id
+    LEFT JOIN thuong_hieu br ON br.id = s.thuong_hieu_id
+    LEFT JOIN co_ao ca ON ca.id = s.co_ao_id
+    LEFT JOIN tay_ao ta ON ta.id = s.tay_ao_id
+    LEFT JOIN chat_lieu cl ON cl.id = s.chat_lieu_id
+    LEFT JOIN khuyen_mai_chi_tiet pmd ON pmd.chi_tiet_san_pham_id = sd.id
+    LEFT JOIN khuyen_mai pm ON pm.id = pmd.khuyen_mai_id
+    WHERE (:promotion IS NULL OR pm.id = :promotion)
+    """, nativeQuery = true)
+    List<SanPhamKhuyenMaiRespone> getAllShoeInPromotion(@Param("promotion") Long promotion);
+
     @Query(value = """
     SELECT
         s.id AS id,
@@ -128,12 +133,14 @@ WHERE (:#{#req.name} IS NULL OR s.name LIKE CONCAT('%', :#{#req.name}, '%'))
         ROW_NUMBER() OVER(ORDER BY SUM(bd.so_luong) DESC) AS indexs,
         GROUP_CONCAT(DISTINCT c.name ORDER BY c.name) AS color,
         GROUP_CONCAT(DISTINCT sz.name ORDER BY sz.name) AS size,
-        (SELECT GROUP_CONCAT(DISTINCT img.name ORDER BY img.ngay_tao ASC)
+        (SELECT GROUP_CONCAT(DISTINCT img.name ORDER BY img.create_at ASC)
          FROM images img
          WHERE img.san_pham_id = s.id) AS images,
-        ct.name AS category,
-        br.name AS brand,
-        d.name AS sole,
+        xx.name AS xuatXu,
+        br.name AS thuongHieu,
+        ca.name AS coAo,
+        ta.name AS tayAo,
+        cl.name AS chatLieu,
         MAX(sd.gia) AS maxPrice,
         MIN(sd.gia) AS minPrice,
         SUM(bd.so_luong) AS quantitySold,
@@ -142,23 +149,22 @@ WHERE (:#{#req.name} IS NULL OR s.name LIKE CONCAT('%', :#{#req.name}, '%'))
     LEFT JOIN chi_tiet_san_pham sd ON s.id = sd.san_pham_id
     LEFT JOIN mau_sac c ON c.id = sd.mau_sac_id
     LEFT JOIN kich_co sz ON sz.id = sd.kich_co_id
-    LEFT JOIN danh_muc ct ON ct.id = s.danh_muc_id
+    LEFT JOIN xuat_xu xx ON xx.id = s.xuat_xu_id
     LEFT JOIN thuong_hieu br ON br.id = s.thuong_hieu_id
-    LEFT JOIN de d ON d.id = s.de_id
+    LEFT JOIN co_ao ca ON ca.id = s.co_ao_id
+    LEFT JOIN tay_ao ta ON ta.id = s.tay_ao_id
+    LEFT JOIN chat_lieu cl ON cl.id = s.chat_lieu_id
     LEFT JOIN hoa_don_chi_tiet bd ON bd.chi_tiet_san_pham_id = sd.id
     LEFT JOIN hoa_don b ON b.id = bd.hoa_don_id
-    
-   WHERE s.deleted = FALSE AND b.status = 6
-    GROUP BY s.id, s.code, s.name, ct.name, br.name, d.name, s.deleted
+    WHERE s.deleted = FALSE AND b.status = 6
+    GROUP BY s.id, s.code, s.name, xx.name, br.name, ca.name, ta.name, cl.name, s.deleted
     ORDER BY SUM(bd.so_luong) DESC
     LIMIT :top
-""", nativeQuery = true)
+    """, nativeQuery = true)
     List<SanPhamResponse> topSell(@Param("top") Integer top);
 
     Boolean existsByCode(String code);
 
-
-
     @Query(value = """
     SELECT
         s.id AS id,
@@ -167,12 +173,14 @@ WHERE (:#{#req.name} IS NULL OR s.name LIKE CONCAT('%', :#{#req.name}, '%'))
         ROW_NUMBER() OVER(ORDER BY SUM(bd.so_luong) DESC) AS indexs,
         GROUP_CONCAT(DISTINCT c.name ORDER BY c.name) AS color,
         GROUP_CONCAT(DISTINCT sz.name ORDER BY sz.name) AS size,
-        (SELECT GROUP_CONCAT(DISTINCT img.name ORDER BY img.ngay_tao ASC)
+        (SELECT GROUP_CONCAT(DISTINCT img.name ORDER BY img.create_at ASC)
          FROM images img
          WHERE img.san_pham_id = s.id) AS images,
-        ct.name AS category,
-        br.name AS brand,
-        d.name AS sole,
+        xx.name AS xuatXu,
+        br.name AS thuongHieu,
+        ca.name AS coAo,
+        ta.name AS tayAo,
+        cl.name AS chatLieu,
         MAX(sd.gia) AS maxPrice,
         MIN(sd.gia) AS minPrice,
         SUM(bd.so_luong) AS quantitySold,
@@ -181,15 +189,16 @@ WHERE (:#{#req.name} IS NULL OR s.name LIKE CONCAT('%', :#{#req.name}, '%'))
     LEFT JOIN chi_tiet_san_pham sd ON s.id = sd.san_pham_id
     LEFT JOIN mau_sac c ON c.id = sd.mau_sac_id
     LEFT JOIN kich_co sz ON sz.id = sd.kich_co_id
-    LEFT JOIN danh_muc ct ON ct.id = s.danh_muc_id
+    LEFT JOIN xuat_xu xx ON xx.id = s.xuat_xu_id
     LEFT JOIN thuong_hieu br ON br.id = s.thuong_hieu_id
-    LEFT JOIN de d ON d.id = s.de_id
+    LEFT JOIN co_ao ca ON ca.id = s.co_ao_id
+    LEFT JOIN tay_ao ta ON ta.id = s.tay_ao_id
+    LEFT JOIN chat_lieu cl ON cl.id = s.chat_lieu_id
     LEFT JOIN hoa_don_chi_tiet bd ON bd.chi_tiet_san_pham_id = sd.id
     LEFT JOIN hoa_don b ON b.id = bd.hoa_don_id
-  
     WHERE s.deleted = FALSE AND b.status = 6
-    AND (:startDate IS NULL OR :endDate IS NULL OR b.ngay_sua BETWEEN :startDate AND :endDate)
-    GROUP BY s.id, s.code, s.name, ct.name, br.name, d.name, s.deleted
+    AND (:startDate IS NULL OR :endDate IS NULL OR b.update_at BETWEEN :startDate AND :endDate)
+    GROUP BY s.id, s.code, s.name, xx.name, br.name, ca.name, ta.name, cl.name, s.deleted
     ORDER BY SUM(bd.so_luong) DESC
     LIMIT :top
     """, nativeQuery = true)

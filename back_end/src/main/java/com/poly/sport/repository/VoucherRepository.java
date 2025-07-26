@@ -21,7 +21,7 @@ public interface VoucherRepository extends JpaRepository<Voucher,Long> {
 
     @Query(value = """
             SELECT v.id AS id,
-            ROW_NUMBER() OVER(ORDER BY v.ngay_tao DESC) AS indexs,
+            ROW_NUMBER() OVER(ORDER BY v.create_at DESC) AS indexs,
             v.code AS code, v.name AS name,
             v.so_luong AS quantity, v.phan_tram_giam AS percentReduce,
             v.gia_tri_toi_thieu AS minBillValue,

@@ -17,13 +17,13 @@ public class SanPhamRequest extends PageableRequest {
     private String name;
     @NotNull(message = "Thương hiệu không được để trống.")
     private Long thuongHieu;
-    @NotNull(message = "Danh mục không được để trống.")
+    @NotNull(message = "Chất liệu không được để trống.")
     private Long chatLieu;
-    @NotNull(message = "Vui lòng chọn loại đế!")
+    @NotNull(message = "Cổ áo không được để trống.")
     private Long coAo;
-    @NotNull(message = "Vui lòng chọn loại đế!")
+    @NotNull(message = "Tay áo không được để trống.")
     private Long tayAo;
-    @NotNull(message = "Vui lòng chọn loại đế!")
+    @NotNull(message = "Xuất xứ không được để trống.")
     private Long xuatXu;
     @NotNull(message = "Vui lòng chọn hình ảnh!")
 

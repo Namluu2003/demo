@@ -1,5 +1,8 @@
 package com.poly.sport.service.cronJob;
 
+import com.poly.sport.repository.VoucherRepository;
+import com.poly.sport.service.KhuyenMaiService;
+import com.poly.sport.service.VoucherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +17,14 @@ public class VoucherCronJob {
     private static final Logger logger = LoggerFactory.getLogger(VoucherCronJob.class);
     private static final int NEAR_THRESHOLD_MINUTES = 5; // Ngưỡng thời gian gần (phút)
 
-//    @Autowired
-//    private VoucherService voucherService;
-//
-//    @Autowired
-//    private KhuyenMaiService khuyenMaiService;
-//
-//    @Autowired
-//    private VoucherRepository voucherRepository;
+    @Autowired
+    private VoucherService voucherService;
+
+    @Autowired
+    private KhuyenMaiService khuyenMaiService;
+
+    @Autowired
+    private VoucherRepository voucherRepository;
 
 //    @Scheduled(cron = "0 * * * * ?") // Chạy mỗi phút
 //    @Transactional
@@ -99,14 +102,14 @@ public class VoucherCronJob {
 //    }
 
 //
-//    @Scheduled(cron = "*/2 * * * * ?")// 2s chạy một lần
-//    public void autoUpdateStatusVoucher() {
-//        try {
-//            voucherService.updateStatusVoucher();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    @Scheduled(cron = "*/2 * * * * ?")// 2s chạy một lần
+    public void autoUpdateStatusVoucher() {
+        try {
+            voucherService.updateStatusVoucher();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 //    @Scheduled(cron = "*/2 * * * * ?")// 2s chạy một lần
 //    public void autoUpdateStatusPromotion() {
 //        try {

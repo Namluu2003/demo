@@ -482,43 +482,51 @@ function OrderItem({ index, props, onSuccess }) {
       ),
     },
     {
-      title: "Sản phẩm",
-      dataIndex: "name",
-      key: "name",
-      render: (name, record) => (
-        <div className="product-item">
-          <h5 className="product-name fw-semibold">{name}</h5>
-          <ul className="product-details list-unstyled">
-            <li className="product-color">
-              Mã: <small>{record.shoeCode}</small>
-            </li>
-            <li className="product-color">
-              Màu sắc: <small>{record.color}</small>
-            </li>
-            <li className="product-size">
-              Kích cỡ: <small>{record.size}</small>
-            </li>
-            <li>
-              Đơn giá:
-              {record.discountPercent !== null ? (
-                <>
-                  <span className="text-danger">
-                    <FormatCurrency value={record.discountValue} />
-                  </span>{" "}
-                  <span className="text-decoration-line-through text-secondary">
-                    <FormatCurrency value={record.shoePrice} />
-                  </span>
-                </>
-              ) : (
-                <span className="text-danger">
-                  <FormatCurrency value={record.price} />
-                </span>
-              )}
-            </li>
-          </ul>
-        </div>
-      ),
-    },
+  title: "Sản phẩm",
+  dataIndex: "name",
+  key: "name",
+  render: (name, record) => (
+    <div className="d-flex flex-column gap-2 p-2">
+      {/* Tên sản phẩm */}
+      <div className="fw-bold fs-5 text-dark">{name}</div>
+
+      {/* Mã sản phẩm */}
+      <div className="text-secondary fs-6">
+        <strong className="me-1">Mã:</strong>
+        <span className="text-dark">{record.shoeCode}</span>
+      </div>
+
+      {/* Thông tin chi tiết */}
+      <div className="text-secondary fs-6 d-flex flex-wrap gap-3">
+        <div><strong>Xuất xứ:</strong> {record.xuatXu || 'N/A'}</div>
+        <div><strong>Thương hiệu:</strong> {record.thuongHieu || 'N/A'}</div>
+        <div><strong>Cổ áo:</strong> {record.coAo || 'N/A'}</div>
+        <div><strong>Tay áo:</strong> {record.tayAo || 'N/A'}</div>
+        <div><strong>Chất liệu:</strong> {record.chatLieu || 'N/A'}</div>
+      </div>
+
+      {/* Đơn giá */}
+      <div className="mt-2 fs-5">
+        <strong>Đơn giá:</strong>{" "}
+        {record.discountPercent !== null ? (
+          <>
+            <span className="text-danger fw-bold">
+              <FormatCurrency value={record.discountValue} />
+            </span>{" "}
+            <span className="text-decoration-line-through text-secondary fs-6">
+              <FormatCurrency value={record.shoePrice} />
+            </span>
+          </>
+        ) : (
+          <span className="text-danger fw-bold">
+            <FormatCurrency value={record.price} />
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+,
     {
       title: "Số lượng",
       dataIndex: "quantity",
@@ -1023,7 +1031,30 @@ function OrderItem({ index, props, onSuccess }) {
           </Col>
           <Col xl={10} md={24}>
             <ul className="list-unstyled">
-              
+              <li className="mb-2">
+                <Switch
+                  onChange={(value) => {
+                    setTypeOrder(value ? 1 : 0);
+                    if (!value) {
+                      setPayOnDelivery(false);
+                      setWaitPay(false);
+                    }
+                  }}
+                />{" "}
+                Giao hàng
+              </li>
+              {typeOrder === 1 && (
+                <li className="mb-2">
+                  <Switch
+                    checked={payOnDelivery}
+                    onChange={(value) => {
+                      setPayOnDelivery(value);
+                      setWaitPay(value);
+                    }}
+                  />{" "}
+                  Thanh toán khi nhận hàng
+                </li>
+              )}
               <Row gutter={10}>
                 <ChooseVoucher
                   onSelectVoucher={(selectedVoucher) =>

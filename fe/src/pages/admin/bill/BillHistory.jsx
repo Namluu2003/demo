@@ -1,7 +1,7 @@
 import { Button, Modal } from 'antd'
 import React from 'react'
 import { useState } from 'react';
-import { FaBug, FaEdit, FaRegCalendar, FaRegCalendarCheck, FaRegFileAlt, FaTruck } from 'react-icons/fa';
+import { FaBug, FaEdit, FaRegCalendar, FaRegCalendarCheck, FaRegFileAlt, FaTruck, FaCheckCircle } from 'react-icons/fa';
 import { FaTruckFast } from "react-icons/fa6";
 import { GiConfirmed } from 'react-icons/gi';
 import { MdOutlineCancelPresentation, MdOutlineChangeCircle, MdOutlineConfirmationNumber, MdPayment } from 'react-icons/md';
@@ -40,6 +40,9 @@ function BillHistory({ props }) {
                   <tr>
                     <span style={{
                       fontSize: "36px", color: item.status === 1 ? '#007bff' :
+                      item.status === 2 ? "#007bff" :
+                      item.status === 5 ? "#007bff" :
+                      item.status === 10 ? "#007bff" :
                         item.status === 3 ? "#007bff" :
                           item.status === 4 ? "#007bff" :
                             item.status === 500 ? "#007bff" :
@@ -58,6 +61,7 @@ function BillHistory({ props }) {
                                     : item.status === 7 ? <MdOutlineCancelPresentation />
                                       : item.status === 8 ? <MdOutlineChangeCircle />
                                       : item.status === 9 ? <GiConfirmed />
+                                       : item.status === 10 ? <FaCheckCircle />
                                         : item.status === 500 ? <FaEdit /> : ""}
                     </span>
                     <span className='fw-semibold'>
@@ -71,6 +75,7 @@ function BillHistory({ props }) {
                                     : item.status === 7 ? "Hủy"
                                       : item.status === 8 ? "Trả hàng"
                                       : item.status === 9 ? "Đã xác nhận"
+                                      : item.status === 10 ? "Đã giao hàng"
                                         : item.status === 500 ? "Chỉnh sửa đơn hàng" : ""}
                     </span>
                   </tr>
