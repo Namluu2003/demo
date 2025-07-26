@@ -11,20 +11,7 @@ const BannerShow = ({ handleShow }: BannerShowType) => {
       tabIndex={-1}
       className="fixed z-50 flex flex-col md:flex-row justify-between w-[calc(100%-2rem)] p-4 -translate-x-1/2 bg-white border border-gray-100 rounded-lg shadow-sm lg:max-w-7xl left-1/2 top-20 dark:bg-gray-700 dark:border-gray-600"
     >
-      {/* <div className="flex flex-col items-start mb-3 mr-4 md:items-center md:flex-row md:mb-0">
-        <a
-          href="https://flowbite.com/"
-          className="flex items-center mb-2 border-gray-200 md:pr-4 md:mr-4 md:border-r md:mb-0 dark:border-gray-600"
-        >
-          <span className="self-center text-lg font-semibold whitespace-nowrap text-[#FFBA00]">
-            YodaStore
-          </span>
-        </a>
-        <p className="flex items-center text-sm font-normal text-gray-500 dark:text-gray-400">
-          Chào mừng bạn đến với YodaStore. Hãy đăng nhập ngay để xem những ưu đãi
-          của bạn nhé!
-        </p>
-      </div> */}
+     
       <div className="flex items-center flex-shrink-0 ">
         <a
           href={"#"}

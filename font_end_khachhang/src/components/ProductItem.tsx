@@ -1,5 +1,8 @@
 
 
+
+
+
 // import React, { useEffect, useState, useMemo } from "react";
 // import { IDetailProduct, IInforShoe, Product } from "../types/product.type";
 // import { useNavigate } from "react-router-dom";
@@ -192,16 +195,24 @@
 //                   <p>{code || "-"}</p>
 //                 </div>
 //                 <div>
-//                   <p className="font-semibold">Danh mục</p>
-//                   <p>{inforShoe?.category?.name || "-"}</p>
-//                 </div>
-//                 <div>
 //                   <p className="font-semibold">Thương hiệu</p>
-//                   <p>{inforShoe?.brand?.name || "-"}</p>
+//                   <p>{inforShoe?.thuongHieu?.name || "-"}</p>
 //                 </div>
 //                 <div>
-//                   <p className="font-semibold">Loại đế</p>
-//                   <p>{inforShoe?.sole?.name || "-"}</p>
+//                   <p className="font-semibold">Xuất xứ</p>
+//                   <p>{inforShoe?.xuatXu?.name || "-"}</p>
+//                 </div>
+//                 <div>
+//                   <p className="font-semibold">Tay áo</p>
+//                   <p>{inforShoe?.tayAo?.name || "-"}</p>
+//                 </div>
+//                 <div>
+//                   <p className="font-semibold">Cổ áo</p>
+//                   <p>{inforShoe?.coAo?.name || "-"}</p>
+//                 </div>
+//                 <div>
+//                   <p className="font-semibold">Chất liệu</p>
+//                   <p>{inforShoe?.chatLieu?.name || "-"}</p>
 //                 </div>
 //               </div>
 //             </div>
@@ -459,16 +470,24 @@
 //                 <p>{price ? code : "-"}</p>
 //               </div>
 //               <div>
-//                 <p className="font-semibold">Danh mục</p>
-//                 <p>{price ? inforShoe?.category?.name : "-"}</p>
-//               </div>
-//               <div>
 //                 <p className="font-semibold">Thương hiệu</p>
-//                 <p>{price ? inforShoe?.brand?.name : "-"}</p>
+//                 <p>{price ? inforShoe?.thuongHieu?.name : "-"}</p>
 //               </div>
 //               <div>
-//                 <p className="font-semibold">Loại đế</p>
-//                 <p>{price ? inforShoe?.sole?.name : "-"}</p>
+//                 <p className="font-semibold">Xuất xứ</p>
+//                 <p>{price ? inforShoe?.xuatXu?.name : "-"}</p>
+//               </div>
+//               <div>
+//                 <p className="font-semibold">Tay áo</p>
+//                 <p>{price ? inforShoe?.tayAo?.name : "-"}</p>
+//               </div>
+//               <div>
+//                 <p className="font-semibold">Cổ áo</p>
+//                 <p>{price ? inforShoe?.coAo?.name : "-"}</p>
+//               </div>
+//               <div>
+//                 <p className="font-semibold">Chất liệu</p>
+//                 <p>{price ? inforShoe?.chatLieu?.name : "-"}</p>
 //               </div>
 //             </div>
 //           </div>
@@ -496,7 +515,6 @@
 // };
 
 // export default ProductItem;
-
 
 
 
@@ -853,20 +871,38 @@ const ProductItem = ({
                 >
                   -
                 </button>
-                <span className="px-4 py-2 text-center min-w-[40px]">
-                  {amount}
-                </span>
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value) || 1;
+                    const currentQuantity = userPrf
+                      ? getItemQuantityUser(idAddToCart)
+                      : amountItemInCart;
+                    const maxQuantity = amountShoe - currentQuantity;
+
+                    if (value < 1) {
+                      setAmount(1);
+                      toast.warning("Số lượng phải lớn hơn hoặc bằng 1");
+                    } else if (value > maxQuantity) {
+                      setAmount(maxQuantity);
+                      toast.warning("Số lượng thêm đã đạt tối đa");
+                    } else {
+                      setAmount(value);
+                    }
+                  }}
+                  className="px-4 py-2 text-center min-w-[40px] border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  min="1"
+                  max={amountShoe - (userPrf ? getItemQuantityUser(idAddToCart) : amountItemInCart)}
+                />
                 <button
                   className="px-3 py-2 bg-gray-100 hover:bg-gray-200"
                   onClick={() => {
-                    if (
-                      amount >= 20 ||
-                      amountShoe <=
-                        (userPrf
-                          ? getItemQuantityUser(idAddToCart)
-                          : amountItemInCart) +
-                          amount
-                    ) {
+                    const currentQuantity = userPrf
+                      ? getItemQuantityUser(idAddToCart)
+                      : amountItemInCart;
+                    const maxQuantity = amountShoe - currentQuantity;
+                    if (amount >= maxQuantity) {
                       toast.warning("Số lượng thêm đã đạt tối đa");
                     } else {
                       setAmount((prev) => prev + 1);
@@ -899,7 +935,7 @@ const ProductItem = ({
                     idAddToCart &&
                     price &&
                     amountShoe >= amountItemInCart + amount &&
-                    amountItemInCart + amount <= 10
+                    amountItemInCart + amount <= amountShoe
                   ) {
                     addMultipleToCart(idAddToCart, amount);
                     setAmount(1);
@@ -924,14 +960,7 @@ const ProductItem = ({
                     : getItemQuantity(idAddToCart);
                   const totalQuantity = currentQuantity + amount;
 
-                  if (totalQuantity > 20) {
-                    toast.warning(
-                      "Tổng số lượng sản phẩm này đã đạt tối đa trong giỏ hàng!"
-                    );
-                    return;
-                  }
-
-                  if (amountShoe < totalQuantity) {
+                  if (totalQuantity > amountShoe) {
                     toast.warning("Số lượng sản phẩm không đủ trong kho!");
                     return;
                   }

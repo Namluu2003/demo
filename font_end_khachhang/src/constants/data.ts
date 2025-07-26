@@ -3,7 +3,7 @@ import { Color, Product } from "../types/product.type";
 export const dataProduct = [
   {
     id: 1,
-    name: "Giày Nike Air Force 1 Low Shadow Sunset Pulse (W)",
+    name: " Nike Air Force 1 Low Shadow Sunset Pulse (W)",
     href: "#",
     imageSrc: Images.giay01,
     imageAlt: "Front of men's Basic Tee in black.",
@@ -13,7 +13,7 @@ export const dataProduct = [
   },
   {
     id: 2,
-    name: "Giày Nike Air Force 1 Low Shadow Sunset Pulse (W)",
+    name: " Nike Air Force 1 Low Shadow Sunset Pulse (W)",
     href: "#",
     imageSrc: Images.giay02,
     imageAlt: "Front of men's Basic Tee in black.",
@@ -23,7 +23,7 @@ export const dataProduct = [
   },
   {
     id: 3,
-    name: "Giày Nike Air Force 1 Low Shadow Sunset Pulse (W)",
+    name: " Nike Air Force 1 Low Shadow Sunset Pulse (W)",
     href: "#",
     imageSrc: Images.giay10,
     imageAlt: "Front of men's Basic Tee in black.",
@@ -33,7 +33,7 @@ export const dataProduct = [
   },
   {
     id: 4,
-    name: "Giày Nike Air Force 1 Low Shadow Sunset Pulse (W)",
+    name: " Nike Air Force 1 Low Shadow Sunset Pulse (W)",
     href: "#",
     imageSrc: Images.giay09,
     imageAlt: "Front of men's Basic Tee in black.",
@@ -43,7 +43,7 @@ export const dataProduct = [
   },
   {
     id: 5,
-    name: "Giày Nike Air Force 1 Low Shadow Sunset Pulse (W)",
+    name: " Nike Air Force 1 Low Shadow Sunset Pulse (W)",
     href: "#",
     imageSrc: Images.giay08,
     imageAlt: "Front of men's Basic Tee in black.",
@@ -53,7 +53,7 @@ export const dataProduct = [
   },
   {
     id: 6,
-    name: "Giày Nike Air Force 1 Low Shadow Sunset Pulse (W)",
+    name: " Nike Air Force 1 Low Shadow Sunset Pulse (W)",
     href: "#",
     imageSrc: Images.giay05,
     imageAlt: "Front of men's Basic Tee in black.",
@@ -63,7 +63,7 @@ export const dataProduct = [
   },
   {
     id: 7,
-    name: "Giày Nike Air Force 1 Low Shadow Sunset Pulse (W)",
+    name: " Nike Air Force 1 Low Shadow Sunset Pulse (W)",
     href: "#",
     imageSrc: Images.giay06,
     imageAlt: "Front of men's Basic Tee in black.",
@@ -73,7 +73,7 @@ export const dataProduct = [
   },
   {
     id: 8,
-    name: "Giày Nike Air Force 1 Low Shadow Sunset Pulse (W)",
+    name: " Nike Air Force 1 Low Shadow Sunset Pulse (W)",
     href: "#",
     imageSrc: Images.giay07,
     imageAlt: "Front of men's Basic Tee in black.",
@@ -83,7 +83,7 @@ export const dataProduct = [
   },
   {
     id: 9,
-    name: "Giày Nike Air Force 1 Low Shadow Sunset Pulse (W)",
+    name: " Nike Air Force 1 Low Shadow Sunset Pulse (W)",
     href: "#",
     imageSrc: Images.giay10,
     imageAlt: "Front of men's Basic Tee in black.",
@@ -93,7 +93,7 @@ export const dataProduct = [
   },
   {
     id: 10,
-    name: "Giày Nike Air Force 1 Low Shadow Sunset Pulse (W)",
+    name: " Nike Air Force 1 Low Shadow Sunset Pulse (W)",
     href: "#",
     imageSrc: Images.giay12,
     imageAlt: "Front of men's Basic Tee in black.",

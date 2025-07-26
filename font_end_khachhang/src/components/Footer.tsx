@@ -4,13 +4,13 @@ import Images from "../static";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-gray-300 pt-10 pb-6">
+    <footer className="bg-orange-500 text-gray-300 pt-10 pb-6">
       <div className="container mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
         {/* Company Info */}
         <div>
-          <h2 className="text-xl font-bold text-white mb-4">YodaStore</h2>
+          <h2 className="text-xl font-bold text-white mb-4">T&T Sports</h2>
           <p className="text-sm">
-            Chuyên cung cấp giày thể thao chính hãng từ các thương hiệu hàng đầu thế giới.
+            Chuyên cung cấp áo chính hãng từ các thương hiệu hàng đầu thế giới.
           </p>
         </div>
 
@@ -18,9 +18,9 @@ const Footer = () => {
         <div>
           <h3 className="text-lg font-semibold text-white mb-4">Danh mục</h3>
           <ul className="space-y-2 text-sm">
-            <li><a href="#" className="hover:text-indigo-400 transition-colors">Giày đá bóng</a></li>
-            <li><a href="#" className="hover:text-indigo-400 transition-colors">Giày chạy bộ</a></li>
-            <li><a href="#" className="hover:text-indigo-400 transition-colors">Giày thời trang</a></li>
+            <li><a href="#" className="hover:text-indigo-400 transition-colors">Áo phông</a></li>
+            <li><a href="#" className="hover:text-indigo-400 transition-colors">Áo thể thao</a></li>
+            <li><a href="#" className="hover:text-indigo-400 transition-colors">Áo len</a></li>
             
           </ul>
         </div>
@@ -44,7 +44,7 @@ const Footer = () => {
             </li>
             <li className="flex items-center">
               <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm-2 12H6V8l6 4 6-4v8z" /></svg>
-              support@yodastore.com
+              support@ttsports.com
             </li>
             <li className="flex items-center">
               <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M6 2h12a2 2 0 012 2v16a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2zm6 16a4 4 0 100-8 4 4 0 000 8z" /></svg>
@@ -65,7 +65,7 @@ const Footer = () => {
       </div>
 
       <div className="container mx-auto px-6 mt-6 text-center text-sm border-t border-gray-800 pt-4">
-        <p>© 2025 YodaStore. All rights reserved.</p>
+        <p>© 2025 T&T Sports. All rights reserved.</p>
       </div>
     </footer>
   );

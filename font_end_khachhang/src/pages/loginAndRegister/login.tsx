@@ -365,7 +365,7 @@ const RegistrationInfo = ({
       {checkRegister === 2 ? "Khách hàng đã có tài khoản" : "Khách hàng mới"}
     </h2>
     <p className="text-sm text-gray-600 mb-4">
-    Đăng ký tài khoản với YodaStore để dễ dàng thanh toán, lưu trữ thông tin giao hàng, theo dõi đơn hàng và nhiều tính năng tiện ích khác.
+    Đăng ký tài khoản với T&T Sport để dễ dàng thanh toán, lưu trữ thông tin giao hàng, theo dõi đơn hàng và nhiều tính năng tiện ích khác.
     </p>
     <button
       onClick={() => setCheckRegister(checkRegister === 2 ? 1 : 2)}

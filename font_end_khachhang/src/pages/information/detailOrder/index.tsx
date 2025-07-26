@@ -44,7 +44,7 @@ const DetailOrder = () => {
                     <div className="flex justify-start items-start flex-col space-y-2">
                       <p className="text-sm dark:text-white leading-none text-gray-800">
                         <span className="dark:text-gray-400 text-gray-300">
-                          Hãng giày:{" "}
+                          Hãng áo:{" "}
                         </span>{" "}
                         Italic Minimal Design
                       </p>

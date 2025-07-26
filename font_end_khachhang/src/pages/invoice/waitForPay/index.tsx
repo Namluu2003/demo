@@ -13,19 +13,19 @@ const WaitForPay = () => {
   const navigate = useNavigate();
   const items = [
     {
-      name: "Giày Sneakers Nam BELSPORTS HJ06 - BSN020",
+      name: " Sneakers Nam BELSPORTS HJ06 - BSN020",
       price: 200000,
       color: "SkyBlue",
       quantity: 1,
     },
     {
-      name: "Giày Sneakers Nam BELSPORTS HJ06 - BSN020",
+      name: " Sneakers Nam BELSPORTS HJ06 - BSN020",
       price: 200000,
       color: "SkyBlue",
       quantity: 1,
     },
     {
-      name: "Giày Sneakers Nam BELSPORTS HJ06 - BSN020",
+      name: " Sneakers Nam BELSPORTS HJ06 - BSN020",
       price: 200000,
       color: "SkyBlue",
       quantity: 1,

@@ -107,7 +107,7 @@ function Color() {
       className: "text-center",
       render: (x, item) => (
         <Switch
-          className={x ? "bg-danger" : "bg-success"}
+          className={x ? "bg-danger" : "bg-warning"}
           checkedChildren={<i class="fa-solid fa-check"></i>}
           unCheckedChildren={<i class="fa-solid fa-xmark"></i>}
           checked={!x}

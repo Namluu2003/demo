@@ -18,7 +18,7 @@ const SliderHome = () => {
   const listBanner = [
     Images.banner1,
     Images.banner2,
-    Images.banner3,
+
     
   ];
   return (

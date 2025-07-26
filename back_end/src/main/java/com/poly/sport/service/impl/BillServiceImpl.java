@@ -686,9 +686,9 @@ public class BillServiceImpl implements BillService {
             if (shoeDetail.getQuantity() <= 0) {
                 throw new NgoaiLe("Sản phẩm " + sanPham.getName() + " [" + shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() + "] đã hết hàng!");
             }
-            if (shoeDetail.getQuantity() < x.getQuantity()) {
-                throw new NgoaiLe(sanPham.getName() + " [" + shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() + "] chỉ được mua tối đa " + shoeDetail.getQuantity() + " sản phẩm!");
-            }
+//            if (shoeDetail.getQuantity() < x.getQuantity()) {
+//                throw new NgoaiLe(sanPham.getName() + " [" + shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() + "] chỉ được mua tối đa " + shoeDetail.getQuantity() + " sản phẩm!");
+//            }
 
             // Xử lý khuyến mãi
             KhuyenMaiChiTiet khuyenMaiChiTiet = khuyenMaiChiTietRepository.findByShoeDetailCode(shoeDetail.getCode());
@@ -996,9 +996,9 @@ public class BillServiceImpl implements BillService {
             if (shoeDetail.getQuantity() <= 0) {
                 throw new NgoaiLe("Sản phẩm " + sanPham.getName() + " [" + shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() + "] đã hết hàng!");
             }
-            if (shoeDetail.getQuantity() < x.getQuantity()) {
-                throw new NgoaiLe(sanPham.getName() + " [" + shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() + "] chỉ được mua tối đa " + shoeDetail.getQuantity() + " sản phẩm!");
-            }
+//            if (shoeDetail.getQuantity() < x.getQuantity()) {
+//                throw new NgoaiLe(sanPham.getName() + " [" + shoeDetail.getColor().getName() + "-" + shoeDetail.getSize().getName() + "] chỉ được mua tối đa " + shoeDetail.getQuantity() + " sản phẩm!");
+//            }
 
             // Xử lý khuyến mãi
             KhuyenMaiChiTiet khuyenMaiChiTiet = khuyenMaiChiTietRepository.findByShoeDetailCode(shoeDetail.getCode());

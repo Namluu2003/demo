@@ -1,15 +1,9 @@
-import banner01 from "./banner01.jpg";
-import banner02 from "./banner02.jpg";
-import banner03 from "./banner03.jpg";
-import banner04 from "./banner04.jpg";
-import banner05 from "./banner05.jpg";
-import banner06 from "./banner06.jpg";
-import banner07 from "./banner07.jpg";
-import banner08 from "./banner08.jpg";
+import banner1 from "./banner1.png";
+import banner2 from "./banner2.jpg";
 import sumenh from "./sumenh.png";
 import chungtoi from "./chungtoi.png";
 
-import bannerAdidas from "./bannerAdidas.jpg";
+
 import bannerNike from "./bannerNike.jpg";
 import giay01 from "./icons/giay01.jpg";
 import giay02 from "./icons/giay02.jpg";
@@ -91,26 +85,16 @@ import iconClose2 from "./icons/iconClose2.png";
 import iconNoti from "./icons/iconNoti.png";
 import iconNote from "./icons/iconNote.png";
 import ghn from "./ghn.png";
-import banner1 from "./banner1.jpeg";
-import banner2 from "./banner2.jpg";
-import banner3 from "./banner3.jpg";
+
 
 const Images = {
-  banner01,
-  banner02,
-  banner03,
-  banner04,
-  banner05,
-  banner06,
-  banner07,
-  banner08,
+ banner1,
+  banner2,
   sumenh,
   chungtoi,
-  banner1,
-  banner2,
-  banner3,
+
   bannerNike,
-  bannerAdidas,
+
   giay01,
   giay02,
   giay03,

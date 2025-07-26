@@ -128,7 +128,7 @@ function Sleeve() {
       className: "text-center",
       render: (x, item) => (
         <Switch
-          className={x ? "bg-danger" : "bg-success"}
+          className={x ? "bg-danger" : "bg-warning"}
           checkedChildren={<i className="fa-solid fa-check"></i>}
           unCheckedChildren={<i className="fa-solid fa-xmark"></i>}
           checked={!x}

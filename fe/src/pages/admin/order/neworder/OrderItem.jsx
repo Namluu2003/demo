@@ -482,51 +482,60 @@ function OrderItem({ index, props, onSuccess }) {
       ),
     },
     {
-  title: "Sản phẩm",
-  dataIndex: "name",
-  key: "name",
-  render: (name, record) => (
-    <div className="d-flex flex-column gap-2 p-2">
-      {/* Tên sản phẩm */}
-      <div className="fw-bold fs-5 text-dark">{name}</div>
+      title: "Sản phẩm",
+      dataIndex: "name",
+      key: "name",
+      render: (name, record) => (
+        <div className="d-flex flex-column gap-2 p-2">
+          {/* Tên sản phẩm */}
+          <div className="fw-bold fs-5 text-dark">{name}</div>
 
-      {/* Mã sản phẩm */}
-      <div className="text-secondary fs-6">
-        <strong className="me-1">Mã:</strong>
-        <span className="text-dark">{record.shoeCode}</span>
-      </div>
+          {/* Mã sản phẩm */}
+          <div className="text-secondary fs-6">
+            <strong className="me-1">Mã:</strong>
+            <span className="text-dark">{record.shoeCode}</span>
+          </div>
 
-      {/* Thông tin chi tiết */}
-      <div className="text-secondary fs-6 d-flex flex-wrap gap-3">
-        <div><strong>Xuất xứ:</strong> {record.xuatXu || 'N/A'}</div>
-        <div><strong>Thương hiệu:</strong> {record.thuongHieu || 'N/A'}</div>
-        <div><strong>Cổ áo:</strong> {record.coAo || 'N/A'}</div>
-        <div><strong>Tay áo:</strong> {record.tayAo || 'N/A'}</div>
-        <div><strong>Chất liệu:</strong> {record.chatLieu || 'N/A'}</div>
-      </div>
+          {/* Thông tin chi tiết */}
+          <div className="text-secondary fs-6 d-flex flex-wrap gap-3">
+            <div>
+              <strong>Xuất xứ:</strong> {record.xuatXu || "N/A"}
+            </div>
+            <div>
+              <strong>Thương hiệu:</strong> {record.thuongHieu || "N/A"}
+            </div>
+            <div>
+              <strong>Cổ áo:</strong> {record.coAo || "N/A"}
+            </div>
+            <div>
+              <strong>Tay áo:</strong> {record.tayAo || "N/A"}
+            </div>
+            <div>
+              <strong>Chất liệu:</strong> {record.chatLieu || "N/A"}
+            </div>
+          </div>
 
-      {/* Đơn giá */}
-      <div className="mt-2 fs-5">
-        <strong>Đơn giá:</strong>{" "}
-        {record.discountPercent !== null ? (
-          <>
-            <span className="text-danger fw-bold">
-              <FormatCurrency value={record.discountValue} />
-            </span>{" "}
-            <span className="text-decoration-line-through text-secondary fs-6">
-              <FormatCurrency value={record.shoePrice} />
-            </span>
-          </>
-        ) : (
-          <span className="text-danger fw-bold">
-            <FormatCurrency value={record.price} />
-          </span>
-        )}
-      </div>
-    </div>
-  )
-}
-,
+          {/* Đơn giá */}
+          <div className="mt-2 fs-5">
+            <strong>Đơn giá:</strong>{" "}
+            {record.discountPercent !== null ? (
+              <>
+                <span className="text-danger fw-bold">
+                  <FormatCurrency value={record.discountValue} />
+                </span>{" "}
+                <span className="text-decoration-line-through text-secondary fs-6">
+                  <FormatCurrency value={record.shoePrice} />
+                </span>
+              </>
+            ) : (
+              <span className="text-danger fw-bold">
+                <FormatCurrency value={record.price} />
+              </span>
+            )}
+          </div>
+        </div>
+      ),
+    },
     {
       title: "Số lượng",
       dataIndex: "quantity",
@@ -1554,7 +1563,7 @@ function OrderItem({ index, props, onSuccess }) {
                       )}
                     </>
                   )}
-                  <li className="mb-2">Phương thức thanh toán:</li>
+                  {/* <li className="mb-2">Phương thức thanh toán:</li>
                   <li className="mb-2 text-center">
                     <Row gutter={10}>
                       <Col xl={12} onClick={() => setPaymentMethod(0)}>
@@ -1583,7 +1592,7 @@ function OrderItem({ index, props, onSuccess }) {
                           </span>
                         </div>
                       </Col>
-                      {/* <Col xl={8} onClick={() => setPaymentMethod(2)}>
+                      <Col xl={8} onClick={() => setPaymentMethod(2)}>
                         <div
                           className={`py-2 border border-2 rounded-2 d-flex align-items-center justify-content-center ${
                             paymentMethod === 2
@@ -1595,8 +1604,75 @@ function OrderItem({ index, props, onSuccess }) {
                             Tiền mặt + Chuyển khoản
                           </span>
                         </div>
-                      </Col> */}
+                      </Col>
                     </Row>
+                  </li> */}
+                  <li className="mb-2">Phương thức thanh toán:</li>
+                  <li className="mb-3 text-center">
+                    <div
+                      className="custom-select-wrapper"
+                      style={{
+                        position: "relative",
+                        maxWidth: "600px",
+                        margin: "0 auto",
+                        fontSize: "16px",
+                      }}
+                    >
+                      <select
+                        className="form-select fw-semibold"
+                        value={paymentMethod}
+                        onChange={(e) =>
+                          setPaymentMethod(Number(e.target.value))
+                        }
+                        style={{
+                          padding: "10px 40px 10px 40px",
+                          borderRadius: "8px",
+                          border: "1px solid #d9d9d9",
+                          backgroundColor: "#fff",
+                          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                          appearance: "none",
+                          backgroundImage:
+                            'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>\')',
+                          backgroundRepeat: "no-repeat",
+                          backgroundPosition: "right 10px center",
+                        }}
+                      >
+                        <option
+                          value={0}
+                          data-icon="fas fa-money-bill-wave text-success"
+                        >
+                          Tiền mặt
+                        </option>
+                        <option
+                          value={1}
+                          data-icon="fas fa-university text-primary"
+                        >
+                          Chuyển khoản
+                        </option>
+                        {/* <option
+                          value={2}
+                          data-icon="fas fa-wallet text-warning"
+                        >
+                          Tiền mặt + Chuyển khoản
+                        </option> */}
+                      </select>
+                      <i
+                        className={
+                          paymentMethod === 0
+                            ? "fas fa-money-bill-wave text-success"
+                            : paymentMethod === 1
+                            ? "fas fa-university text-primary"
+                            : "fas fa-wallet text-warning"
+                        }
+                        style={{
+                          position: "absolute",
+                          left: "10px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          fontSize: "18px",
+                        }}
+                      ></i>
+                    </div>
                   </li>
                 </>
               )}

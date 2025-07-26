@@ -31,7 +31,7 @@ const About = () => {
                 <p className="text-lg text-gray-700 leading-relaxed">
                   Thành lập từ niềm đam mê với thời trang và chất lượng, chúng tôi
                   tự hào mang đến những sản phẩm được tuyển chọn kỹ lưỡng từ các
-                  thương hiệu hàng đầu. Mỗi đôi giày, mỗi sản phẩm đều kể một câu
+                  thương hiệu hàng đầu. Mỗi chiếc áo, mỗi sản phẩm đều kể một câu
                   chuyện về sự tinh tế và phong cách.
                 </p>
                 <p className="text-lg text-gray-700 leading-relaxed mt-4">
