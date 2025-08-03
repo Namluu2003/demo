@@ -2,7 +2,8 @@ import banner1 from "./banner1.png";
 import banner2 from "./banner2.jpg";
 import sumenh from "./sumenh.png";
 import chungtoi from "./chungtoi.png";
-
+import a1 from "./a1.jpg";
+import a2 from "./a2.jpg";
 
 import bannerNike from "./bannerNike.jpg";
 import giay01 from "./icons/giay01.jpg";
@@ -92,7 +93,8 @@ const Images = {
   banner2,
   sumenh,
   chungtoi,
-
+  a1,
+  a2,
   bannerNike,
 
   giay01,

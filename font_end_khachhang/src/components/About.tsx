@@ -42,7 +42,7 @@ const About = () => {
               </div>
               <div className="rounded-lg overflow-hidden shadow-xl">
                 <LazyLoadImage
-                  src={Images.chungtoi} // Replace with your image
+                  src={Images.a1} // Replace with your image
                   alt="Our Story"
                   className="w-full h-80 object-cover"
                 />
@@ -58,7 +58,7 @@ const About = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 <div className="rounded-lg overflow-hidden shadow-xl">
                   <LazyLoadImage
-                    src={Images.sumenh} // Replace with your image
+                    src={Images.a2} // Replace with your image
                     alt="Our Mission"
                     className="w-full h-80 object-cover"
                   />

@@ -791,7 +791,7 @@ const ProductItem = ({
               <span className="text-base font-semibold text-gray-800">
                 Chọn kích thước
               </span>
-              <button
+              {/* <button
                 className="text-sm text-blue-600 underline flex items-center gap-1"
                 onClick={() => setShowModal(true)}
               >
@@ -801,7 +801,7 @@ const ProductItem = ({
                   className="w-4 h-4"
                 />
                 Hướng dẫn chọn size
-              </button>
+              </button> */}
             </div>
             <div className="flex flex-wrap gap-2">
               {availableSizes?.map((size, i) => (
