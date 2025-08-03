@@ -232,13 +232,13 @@ const ListProductsByBrand = () => {
     if (res.status) setBrands(res.data?.data);
   };
 
-  const getDataCategory = async () => {
-    const res = await axios({
-      method: "get",
-      url: API.getCategory(),
-    });
-    if (res.status) setCategories(res.data?.data);
-  };
+  // const getDataCategory = async () => {
+  //   const res = await axios({
+  //     method: "get",
+  //     url: API.getCategory(),
+  //   });
+  //   if (res.status) setCategories(res.data?.data);
+  // };
 
   const getFilter = async () => {
     const myColor = selectedColors.map((i) => i.id);
@@ -281,7 +281,7 @@ const ListProductsByBrand = () => {
     // getDataSole();
     getDataColor();
     getDataBrand();
-    getDataCategory();
+    // getDataCategory();
   }, []);
 
   useEffect(() => {
@@ -501,8 +501,8 @@ const ListProductsByBrand = () => {
             className="w-64 h-auto transition-transform -translate-x-full sm:translate-x-0 mt-[68px]"
             aria-label="Sidebar"
           >
-            <span>Bộ lọc</span>
-            <div className="mx-2 my-5 h-fit filter-container">
+            <span className="-mt-6 ml-4 block">Bộ lọc</span>
+            <div className="mx-2 my-5 h-fit filter-container -mt-2">
               <div className="flex flex-col items-center justify-center w-full">
                 {/* Bộ lọc màu sắc */}
                 <button
@@ -580,47 +580,7 @@ const ListProductsByBrand = () => {
                   </div>
                 )}
 
-                {/* Bộ lọc loại đế */}
-                <button
-                  onClick={handleDropdownToggleMaterial}
-                  className="btn4 w-full"
-                  type="button"
-                  aria-expanded={isDropdownOpen3}
-                >
-                  <p className="font-medium text-xs">Loại đế</p>
-                  <svg className="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                {isDropdownOpen3 && (
-                  <div className="w-full dropdown-content">
-                    <ul className="space-y-2 text-sm">
-                      {materials &&
-                        materials.length &&
-                        materials.map((material) => {
-                          const isSelected = selectedMaterials.some(
-                            (s) => s.material === material.name && s.selected
-                          );
-                          return (
-                            <li
-                              key={material.id}
-                              className="flex items-center cursor-pointer"
-                              onClick={() => handleMaterialsSelect(material)}
-                            >
-                              <input
-                                id={`material-${material.id}`}
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={() => {}}
-                                className="w-4 h-4"
-                              />
-                              <span className="ml-2 text-sm font-medium">{material.name}</span>
-                            </li>
-                          );
-                        })}
-                    </ul>
-                  </div>
-                )}
+               
 
                 {/* Bộ lọc thương hiệu */}
                 <button
@@ -662,47 +622,7 @@ const ListProductsByBrand = () => {
                   </div>
                 )}
 
-                {/* Bộ lọc danh mục */}
-                <button
-                  onClick={handleDropdownToggleCategory}
-                  className="btn4 w-full"
-                  type="button"
-                  aria-expanded={isDropdownOpen6}
-                >
-                  <p className="font-medium text-xs">Danh mục</p>
-                  <svg className="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                {isDropdownOpen6 && (
-                  <div className="w-full dropdown-content">
-                    <ul className="space-y-2 text-sm">
-                      {categories &&
-                        categories.length &&
-                        categories.map((category) => {
-                          const isSelected = selectedCategories.some(
-                            (s) => s.category === category.name && s.selected
-                          );
-                          return (
-                            <li
-                              key={category.id}
-                              className="flex items-center cursor-pointer"
-                              onClick={() => handleCategorySelect(category)}
-                            >
-                              <input
-                                id={`category-${category.id}`}
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={() => {}}
-                                className="w-4 h-4"
-                              />
-                              <span className="ml-2 text-sm font-medium">{category.name}</span>
-                            </li>
-                          );
-                        })}
-                    </ul>
-                  </div>
-                )}
+               
 
                 {/* Bộ lọc khoảng giá */}
                 <button

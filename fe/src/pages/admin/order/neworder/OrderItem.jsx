@@ -497,7 +497,7 @@ function OrderItem({ index, props, onSuccess }) {
           </div>
 
           {/* Thông tin chi tiết */}
-          <div className="text-secondary fs-6 d-flex flex-wrap gap-3">
+          {/* <div className="text-secondary fs-6 d-flex flex-wrap gap-3">
             <div>
               <strong>Xuất xứ:</strong> {record.xuatXu || "N/A"}
             </div>
@@ -513,7 +513,7 @@ function OrderItem({ index, props, onSuccess }) {
             <div>
               <strong>Chất liệu:</strong> {record.chatLieu || "N/A"}
             </div>
-          </div>
+          </div> */}
 
           {/* Đơn giá */}
           <div className="mt-2 fs-5">

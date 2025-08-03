@@ -1,10 +1,7 @@
-
-
 import {
   Button,
   Col,
   Form,
-  Input,
   InputNumber,
   Modal,
   QRCode,
@@ -38,12 +35,8 @@ function UpdateShoeDetail({ props, onSuccess }) {
 
   const [loading, setLoading] = useState(false);
 
-  
   const showModal = () => {
     setIsModalOpen(true);
-    // setSearchSize(props.size);
-    // setSearchColor(props.color);
-    // setSearchSole(props.sole);
     form.setFieldsValue({
       size: props.size,
       color: props.color,
@@ -53,13 +46,14 @@ function UpdateShoeDetail({ props, onSuccess }) {
       weight: props.weight,
     });
   };
+
   const handleOk = (data) => {
     console.log(data);
     data.shoe = props.id;
     Modal.confirm({
       title: "Xác nhận",
       maskClosable: true,
-      content: `Xác nhận cập nhật chi tiết sản phẩm?`, // Sửa lại nội dung cho phù hợp
+      content: `Xác nhận cập nhật chi tiết sản phẩm?`,
       okText: "Xác nhận",
       cancelText: "Hủy",
       onOk: async () => {
@@ -68,7 +62,7 @@ function UpdateShoeDetail({ props, onSuccess }) {
           .then((response) => {
             toast.success("Cập nhật thành công!");
             setIsModalOpen(false);
-            onSuccess(); // Gọi hàm onSuccess để load lại danh sách chi tiết sản phẩm
+            onSuccess();
           })
           .catch((e) => {
             toast.error(e.response.data);
@@ -124,6 +118,22 @@ function UpdateShoeDetail({ props, onSuccess }) {
 
   const handleSelectImg = (img) => {
     console.log(img);
+  };
+
+  // Custom validator for non-negative price
+  const validateNonNegativePrice = (_, value) => {
+    if (value < 0) {
+      return Promise.reject("Đơn giá không được là số âm!");
+    }
+    return Promise.resolve();
+  };
+
+  // Custom validator for non-negative quantity
+  const validateNonNegativeQuantity = (_, value) => {
+    if (value < 0) {
+      return Promise.reject("Số lượng không được là số âm!");
+    }
+    return Promise.resolve();
   };
 
   return (
@@ -223,16 +233,16 @@ function UpdateShoeDetail({ props, onSuccess }) {
                 </Select>
               </Form.Item>
             </Col>
-
             <Col xl={8}>
               <Form.Item
                 label={"Đơn giá"}
                 name={"price"}
                 rules={[
                   { required: true, message: "Đơn giá không được để trống!" },
+                  { validator: validateNonNegativePrice },
                 ]}
+                validateTrigger={["onChange", "onBlur"]}
               >
-                {/* <Input placeholder='Nhập đơn giá...' /> */}
                 <InputNumber
                   className="w-100"
                   formatter={(value) =>
@@ -244,8 +254,7 @@ function UpdateShoeDetail({ props, onSuccess }) {
                       : ""
                   }
                   controls={false}
-                  min={0}
-                  // suffix="VNĐ"
+            
                   placeholder="Nhập giá trị đơn tối thiểu..."
                 />
               </Form.Item>
@@ -255,23 +264,18 @@ function UpdateShoeDetail({ props, onSuccess }) {
                 label={"Số lượng"}
                 name={"quantity"}
                 rules={[
-                  { required: true, message: "Đơn giá không được để trống!" },
+                  { required: true, message: "Số lượng không được để trống!" },
+                  { validator: validateNonNegativeQuantity },
                 ]}
+                validateTrigger={["onChange", "onBlur"]}
               >
-                <Input placeholder="Nhập số lượng..." />
+                <InputNumber
+                  className="w-100"
+                  controls={false}
+                  placeholder="Nhập số lượng..."
+                />
               </Form.Item>
             </Col>
-            {/* <Col xl={8}>
-              <Form.Item
-                label={"Cân nặng"}
-                name={"weight"}
-                rules={[
-                  { required: true, message: "Cân nặng không được để trống!" },
-                ]}
-              >
-                <Input placeholder="Nhập cân nặng..." />
-              </Form.Item>
-            </Col> */}
             <Col xl={20} className="d-flex justify-content-center">
               <QRCode value={props.code} size={300} />
             </Col>

@@ -155,7 +155,7 @@ const ShowBillCheck = () => {
                       {/* <p>Loại đế: <span className="font-medium">{item?.sole}</span></p> */}
                     </div>
                     <p className="mt-2 text-sm">
-                      Thành tiền: 
+                      Thành tiền: {" "} 
                       <span className="font-medium text-red-600">
                         {item?.discountValue
                           ? convertToCurrencyString(item?.discountValue * item?.quantity)

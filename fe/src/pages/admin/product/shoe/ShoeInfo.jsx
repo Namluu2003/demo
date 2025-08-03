@@ -55,6 +55,7 @@ function ShoeInfo() {
   const [formFilter] = Form.useForm();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [shoeDetailSelect, setShoeDetailSelect] = useState([]);
+  const [errors, setErrors] = useState({});
 
   // Row selection for table
   const onSelectChange = (newSelectedRowKeys, selectedRows) =>{
@@ -69,35 +70,111 @@ function ShoeInfo() {
 
   // Handle inline changes for quantity, price
 
+  // const handleQuantityChange = (value, id) => {
+  //   const detail = listProductDetail.find((detail) => detail.id === id);
+  //   const index = listUpdate.findIndex((item) => item.id === id);
+  //   if (index !== -1) {
+  //     listUpdate[index].quantity = value;
+  //   } else {
+  //     listUpdate.push({ id, quantity: value, price: detail.price });
+  //   }
+  // };
+
+  // const handlePriceChange = (value, id) => {
+  //   const detail = listProductDetail.find((detail) => detail.id === id);
+  //   const index = listUpdate.findIndex((item) => item.id === id);
+  //   if (index !== -1) {
+  //     listUpdate[index].price = value;
+  //   } else {
+  //     listUpdate.push({ id, quantity: detail.quantity, price: value });
+  //   }
+  // };
+  // const handleWeightChange = (value, id) => {
+  //   const detail = listProductDetail.find((detail) => detail.id === id);
+  //   const index = listUpdate.findIndex((item) => item.id === id);
+  //   if (index !== -1) {
+  //     listUpdate[index].weight = value;
+  //   } else {
+  //     listUpdate.push({ id, quantity: detail.quantity, price: detail.price, weight: value });
+  //   }
+  // };
+
+
+
   const handleQuantityChange = (value, id) => {
-    const detail = listProductDetail.find((detail) => detail.id === id);
-    const index = listUpdate.findIndex((item) => item.id === id);
-    if (index !== -1) {
-      listUpdate[index].quantity = value;
-    } else {
-      listUpdate.push({ id, quantity: value, price: detail.price });
-    }
-  };
+  const detail = listProductDetail.find((detail) => detail.id === id);
+  const index = listUpdate.findIndex((item) => item.id === id);
+  let newErrors = { ...errors };
 
-  const handlePriceChange = (value, id) => {
-    const detail = listProductDetail.find((detail) => detail.id === id);
-    const index = listUpdate.findIndex((item) => item.id === id);
-    if (index !== -1) {
-      listUpdate[index].price = value;
-    } else {
-      listUpdate.push({ id, quantity: detail.quantity, price: value });
-    }
-  };
-  const handleWeightChange = (value, id) => {
-    const detail = listProductDetail.find((detail) => detail.id === id);
-    const index = listUpdate.findIndex((item) => item.id === id);
-    if (index !== -1) {
-      listUpdate[index].weight = value;
-    } else {
-      listUpdate.push({ id, quantity: detail.quantity, price: detail.price, weight: value });
-    }
-  };
+  // Kiểm tra rỗng hoặc âm
+  if (value === null || value === undefined) {
+    newErrors[id] = { ...newErrors[id], quantity: "Số lượng không được để trống!" };
+  } else if (value < 0) {
+    newErrors[id] = { ...newErrors[id], quantity: "Số lượng không được âm!" };
+  } else {
+    newErrors[id] = { ...newErrors[id], quantity: null }; // Xóa lỗi nếu hợp lệ
+  }
 
+  setErrors(newErrors);
+
+  // Cập nhật listUpdate
+  if (index !== -1) {
+    listUpdate[index].quantity = value;
+  } else {
+    listUpdate.push({ id, quantity: value, price: detail.price, weight: detail.weight });
+  }
+  setListUpdate([...listUpdate]);
+};
+
+const handlePriceChange = (value, id) => {
+  const detail = listProductDetail.find((detail) => detail.id === id);
+  const index = listUpdate.findIndex((item) => item.id === id);
+  let newErrors = { ...errors };
+
+  // Kiểm tra rỗng hoặc âm
+  if (value === null || value === undefined) {
+    newErrors[id] = { ...newErrors[id], price: "Đơn giá không được để trống!" };
+  } else if (value < 0) {
+    newErrors[id] = { ...newErrors[id], price: "Đơn giá không được âm!" };
+  } else {
+    newErrors[id] = { ...newErrors[id], price: null }; // Xóa lỗi nếu hợp lệ
+  }
+
+  setErrors(newErrors);
+
+  // Cập nhật listUpdate
+  if (index !== -1) {
+    listUpdate[index].price = value;
+  } else {
+    listUpdate.push({ id, quantity: detail.quantity, price: value, weight: detail.weight });
+  }
+  setListUpdate([...listUpdate]);
+};
+
+const handleWeightChange = (value, id) => {
+  const detail = listProductDetail.find((detail) => detail.id === id);
+  const index = listUpdate.findIndex((item) => item.id === id);
+  let newErrors = { ...errors };
+
+  // Kiểm tra rỗng hoặc âm
+  if (value === null || value === undefined) {
+    newErrors[id] = { ...newErrors[id], weight: "Cân nặng không được để trống!" };
+  } else if (value < 0) {
+    newErrors[id] = { ...newErrors[id], weight: "Cân nặng không được âm!" };
+  } else {
+    newErrors[id] = { ...newErrors[id], weight: null }; // Xóa lỗi nếu hợp lệ
+  }
+
+  setErrors(newErrors);
+
+  // Cập nhật listUpdate
+  if (index !== -1) {
+    listUpdate[index].weight = value;
+  } else {
+    listUpdate.push({ id, quantity: detail.quantity, price: detail.price, weight: value });
+  }
+  setListUpdate([...listUpdate]);
+};
   // Fetch filter options (size, color, xuatXu, thuongHieu, coAo, tayAo, chatLieu)
   useEffect(() => {
     request.get('/size', { params: { name: searchSize } }).then(response => {
@@ -214,27 +291,40 @@ function ShoeInfo() {
 
   // Handle bulk update
   const handleUpdateFast = () => {
-    Modal.confirm({
-      title: "Xác nhận",
-      maskClosable: true,
-      content: `Xác nhận cập nhật ${selectedRowKeys.length} sản phẩm?`,
-      okText: "Xác nhận",
-      cancelText: "Hủy",
-      onOk: () => {
-        request.put('/shoe-detail/update-fast', listUpdate)
-          .then(() => {
-            message.success("Cập nhật thành công!");
-            loadShoeDetail(id, currentPage, pageSize);
-            setSelectedRowKeys([]);
-            setListUpdate([]);
-          })
-          .catch((e) => {
-            console.error(e);
-            message.error("Cập nhật thất bại!");
-          });
-      },
-    });
-  };
+  // Kiểm tra xem có lỗi nào không
+  const hasErrors = Object.values(errors).some(
+    (error) => error?.quantity || error?.price || error?.weight
+  );
+
+  if (hasErrors) {
+    message.error("Vui lòng sửa các lỗi trước khi cập nhật!");
+    return; // Ngăn không cho tiếp tục nếu có lỗi
+  }
+
+  // Hiển thị Modal xác nhận nếu không có lỗi
+  Modal.confirm({
+    title: "Xác nhận",
+    maskClosable: true,
+    content: `Xác nhận cập nhật ${selectedRowKeys.length} sản phẩm?`,
+    okText: "Xác nhận",
+    cancelText: "Hủy",
+    onOk: () => {
+      request
+        .put("/shoe-detail/update-fast", listUpdate)
+        .then(() => {
+          message.success("Cập nhật thành công!");
+          loadShoeDetail(id, currentPage, pageSize);
+          setSelectedRowKeys([]);
+          setListUpdate([]);
+          setErrors({}); // Xóa lỗi sau khi cập nhật thành công
+        })
+        .catch((e) => {
+          console.error(e);
+          message.error("Cập nhật thất bại!");
+        });
+    },
+  });
+};
 
   if (loading) {
     return (
@@ -268,6 +358,7 @@ function ShoeInfo() {
         ) : null,
     },
   ];
+  
 
   const productInfoData = [
     {
@@ -283,162 +374,182 @@ function ShoeInfo() {
   ];
 
   const detailColumns = [
-    { title: "STT", dataIndex: "index", key: "index" },
-    { title: "Mã", dataIndex: "code", key: "code" },
-    { title: "Tên", dataIndex: "name", key: "name" },
-    { title: "Màu sắc", dataIndex: "color", key: "color" },
-    { title: "Size", dataIndex: "size", key: "size" },
-    {
-      title: "Số lượng",
-      dataIndex: "quantity",
-      key: "quantity",
-      render: (x, record) => (
-        <>
-          {selectedRowKeys.includes(record.id) ? (
+  { title: "STT", dataIndex: "index", key: "index" },
+  { title: "Mã", dataIndex: "code", key: "code" },
+  { title: "Tên", dataIndex: "name", key: "name" },
+  { title: "Màu sắc", dataIndex: "color", key: "color" },
+  { title: "Size", dataIndex: "size", key: "size" },
+  {
+    title: "Số lượng",
+    dataIndex: "quantity",
+    key: "quantity",
+    render: (x, record) => (
+      <div>
+        {selectedRowKeys.includes(record.id) ? (
+          <>
             <InputNumber
               defaultValue={x}
               formatter={(value) => ` ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
               parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
               controls={false}
-              min={0}
+    
               onChange={(value) => handleQuantityChange(value, record.id)}
             />
-          ) : (
-            <>{x == null ? 0 : x}</>
-          )}
-        </>
-      ),
-    },
-    {
-      title: "Đơn giá",
-      dataIndex: "price",
-      key: "price",
-      render: (x, record) => (
-        <>
-          {selectedRowKeys.includes(record.id) ? (
+            {errors[record.id]?.quantity && (
+              <div style={{ color: "red", fontSize: "12px" }}>
+                {errors[record.id].quantity}
+              </div>
+            )}
+          </>
+        ) : (
+          <>{x == null ? 0 : x}</>
+        )}
+      </div>
+    ),
+  },
+  {
+    title: "Đơn giá",
+    dataIndex: "price",
+    key: "price",
+    render: (x, record) => (
+      <div>
+        {selectedRowKeys.includes(record.id) ? (
+          <>
             <InputNumber
               defaultValue={x}
               formatter={(value) => ` ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
               parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
               controls={false}
-              min={0}
+
               onChange={(value) => handlePriceChange(value, record.id)}
             />
-          ) : (
-            <>
-              {record.discountPercent !== null ? (
-                <>
-                  <span className="text-danger">
-                    <FormatCurrency value={record.discountValue} />
-                  </span>{" "}
-                  <br />{" "}
-                  <span className="text-decoration-line-through text-secondary">
-                    <FormatCurrency value={record.price} />
-                  </span>
-                </>
-              ) : (
+            {errors[record.id]?.price && (
+              <div style={{ color: "red", fontSize: "12px" }}>
+                {errors[record.id].price}
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            {record.discountPercent !== null ? (
+              <>
                 <span className="text-danger">
+                  <FormatCurrency value={record.discountValue} />
+                </span>{" "}
+                <br />{" "}
+                <span className="text-decoration-line-through text-secondary">
                   <FormatCurrency value={record.price} />
                 </span>
-              )}
-            </>
-          )}
-        </>
-      ),
-    },
-    //  {
-    //   title: "Cân nặng",
-    //   dataIndex: "weight",
-    //   key: "weight",
-    //   render: (x, record) => (
-    //     <>
-    //       {selectedRowKeys.includes(record.id) ? (
-    //         <InputNumber
-    //           defaultValue={x}
-    //           formatter={(value) => ` ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-    //           parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-    //           controls={false}
-    //           min={0}
-    //           onChange={(value) => handleWeightChange(value, record.id)}
-    //         />
-    //       ) : (
-    //         <>{x}</>
-    //       )}
-    //     </>
-    //   ),
-    // },
-    
-    {
-      title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
-      render: (status, record) => (
-        <Switch
-          checkedChildren="Đang bán"
-          unCheckedChildren="Ngừng bán"
-          checked={!status}
-          onChange={(checked) => handleStatusChange(record, checked)}
-        />
-      ),
-    },
-    {
-      title: <i>Ảnh</i>,
-      dataIndex: "images",
-      key: "images",
-      render: (images, record) => (
-        <div style={{ position: "relative", width: "100px", height: "100px" }}>
-          {record.discountPercent !== null && (
-            <div
-              style={{
-                position: "absolute",
-                top: "5px",
-                left: "5px",
-                background: "red",
-                color: "white",
-                padding: "2px 5px",
-                fontSize: "14px",
-                fontWeight: "bold",
-                borderRadius: "3px",
-                zIndex: 2,
-              }}
-            >
-              SALE {record.discountPercent}%
-            </div>
-          )}
-          <Carousel
-            autoplay
-            autoplaySpeed={3000}
-            dots={false}
-            arrows={false}
-            style={{ width: "100px" }}
+              </>
+            ) : (
+              <span className="text-danger">
+                <FormatCurrency value={record.price} />
+              </span>
+            )}
+          </>
+        )}
+      </div>
+    ),
+  },
+  // {
+  //   title: "Cân nặng",
+  //   dataIndex: "weight",
+  //   key: "weight",
+  //   render: (x, record) => (
+  //     <div>
+  //       {selectedRowKeys.includes(record.id) ? (
+  //         <>
+  //           <InputNumber
+  //             defaultValue={x}
+  //             formatter={(value) => ` ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+  //             parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+  //             controls={false}
+  //             min={0}
+  //             onChange={(value) => handleWeightChange(value, record.id)}
+  //           />
+  //           {errors[record.id]?.weight && (
+  //             <div style={{ color: "red", fontSize: "12px" }}>
+  //               {errors[record.id].weight}
+  //             </div>
+  //           )}
+  //         </>
+  //       ) : (
+  //         <>{x}</>
+  //       )}
+  //     </div>
+  //   ),
+  // },
+  {
+    title: "Trạng thái",
+    dataIndex: "status",
+    key: "status",
+    render: (status, record) => (
+      <Switch
+        checkedChildren="Đang bán"
+        unCheckedChildren="Ngừng bán"
+        checked={!status}
+        onChange={(checked) => handleStatusChange(record, checked)}
+      />
+    ),
+  },
+  {
+    title: <i>Ảnh</i>,
+    dataIndex: "images",
+    key: "images",
+    render: (images, record) => (
+      <div style={{ position: "relative", width: "100px", height: "100px" }}>
+        {record.discountPercent !== null && (
+          <div
+            style={{
+              position: "absolute",
+              top: "5px",
+              left: "5px",
+              background: "red",
+              color: "white",
+              padding: "2px 5px",
+              fontSize: "14px",
+              fontWeight: "bold",
+              borderRadius: "3px",
+              zIndex: 2,
+            }}
           >
-            {images.split(",").map((image, index) => (
-              <img
-                key={index}
-                src={image}
-                alt="product"
-                style={{
-                  width: "100px",
-                  height: "100px",
-                  objectFit: "contain",
-                }}
-              />
-            ))}
-          </Carousel>
-        </div>
-      ),
-    },
-    {
-      title: "Hành động",
-      key: "action",
-      render: (_, record) => (
-        <UpdateShoeDetail
-          props={record}
-          onSuccess={() => loadShoeDetail(id, currentPage, pageSize)}
-        />
-      ),
-    },
-  ];
+            SALE {record.discountPercent}%
+          </div>
+        )}
+        <Carousel
+          autoplay
+          autoplaySpeed={3000}
+          dots={false}
+          arrows={false}
+          style={{ width: "100px" }}
+        >
+          {images.split(",").map((image, index) => (
+            <img
+              key={index}
+              src={image}
+              alt="product"
+              style={{
+                width: "100px",
+                height: "100px",
+                objectFit: "contain",
+              }}
+            />
+          ))}
+        </Carousel>
+      </div>
+    ),
+  },
+  {
+    title: "Hành động",
+    key: "action",
+    render: (_, record) => (
+      <UpdateShoeDetail
+        props={record}
+        onSuccess={() => loadShoeDetail(id, currentPage, pageSize)}
+      />
+    ),
+  },
+];
 
   return (
     <BaseUI>

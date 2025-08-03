@@ -191,13 +191,13 @@ function UpdateShoe({ props, onSuccess }) {
             description: props.description,
           }}
         >
-          <Form.Item
+          {/* <Form.Item
             label="Mã sản phẩm"
             name="code"
             rules={[{ required: true, message: "Mã sản phẩm không được để trống!" }]}
           >
             <Input placeholder="Nhập mã sản phẩm..." />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item
             label="Tên áo"
