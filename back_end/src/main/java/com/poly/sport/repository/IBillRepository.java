@@ -139,7 +139,8 @@ public interface IBillRepository extends JpaRepository<Bill, Long> {
                WHEN status = 6 THEN 'Hoàn thành'
                WHEN status = 7 THEN 'Đã hủy'
                WHEN status = 8 THEN 'Trả hàng'
-               
+               WHEN status = 9 THEN 'Đã xác nhận'
+               WHEN status = 10 THEN 'Đã giao hàng'
                ELSE 'Chờ thanh toán'
            END AS statusName,
            status AS status,
@@ -252,7 +253,7 @@ public interface IBillRepository extends JpaRepository<Bill, Long> {
         CASE
             WHEN status = 2 THEN 'Chờ xác nhận'
             WHEN status = 9 THEN 'Đã xác nhận'
-            WHEN status = 9 THEN 'Đã giao hàng'
+            WHEN status = 10 THEN 'Đã giao hàng'
             WHEN status = 3 THEN 'Xác nhận thông tin thanh toán'
             WHEN status = 4 THEN 'Chờ giao hàng'
             WHEN status = 5 THEN 'Đang giao hàng'

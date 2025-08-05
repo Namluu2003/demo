@@ -240,7 +240,7 @@ const Bill = ({ onLoad }) => {
             placeholder="Tìm kiếm theo mã hóa đơn, tên khách hàng, số điện thoại..."
             style={{ width: "440px" }}
           />
-          <RangePicker onChange={(dates) => handleDateChange(dates)} />
+          {/* <RangePicker onChange={(dates) => handleDateChange(dates)} /> */}
         </div>
       </div>
       <Tabs

@@ -27,7 +27,7 @@ function Customer({ onSelectCustomer }) {
           name: searchValue,
           page: currentPage,
           sizePage: pageSize,
-          status: customerStatus,
+          status: false,
         },
       })
       .then((response) => {

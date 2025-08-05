@@ -1,79 +1,76 @@
-
-import { Button, Col, Input, Radio, Row, Table,Carousel } from "antd";
+import { Button, Col, Input, Select, Row, Table, Modal, Switch, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import BaseUI from "~/layouts/admin/BaseUI";
 import FormatDate from "~/utils/FormatDate";
 import * as request from "~/utils/httpRequest";
+import { ExclamationCircleFilled } from "@ant-design/icons";
+import { toast } from "react-toastify";
 
 function Staff() {
   const [staffList, setStaffList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-
   const [searchValue, setSearchValue] = useState("");
   const [staffStatus, setStaffStatus] = useState(null);
   const [pageSize, setPageSize] = useState(5);
+  const { confirm } = Modal;
+
   useEffect(() => {
+    loadData(currentPage, pageSize, searchValue, staffStatus);
+  }, [searchValue, pageSize, staffStatus, currentPage]);
+
+  const loadData = (currentPage, pageSize, searchValue, status) => {
     request
       .get("/staff", {
         params: {
           name: searchValue,
           page: currentPage,
           sizePage: pageSize,
-          status: staffStatus,
+          status: status,
         },
       })
       .then((response) => {
-        setStaffList(response.data);
+        console.log("Staff data response:", response); // Debug response
+        setStaffList(response.data.map((item, index) => ({ ...item, key: item.id, index: (currentPage - 1) * pageSize + index + 1 })));
         setTotalPages(response.totalPages);
       })
       .catch((e) => {
-        console.log(e);
+        console.error("Error loading staff data:", e);
+        toast.error("Lỗi khi tải dữ liệu nhân viên!");
       });
-  }, [searchValue, pageSize, staffStatus, currentPage]);
+  };
 
-  // const handleUpdateStatus = (staff) => {
-  //   Modal.confirm({
-  //     title: "Xác nhận",
-  //     maskClosable: true,
-  //     content: (
-  //       <div>
-  //         <p>{`Cập nhật trạng thái ${staff.name} thành ${staff.deleted === false ? "Đã nghỉ" : "Đang làm"
-  //           } ?`}</p>
-  //         {staff.deleted === false ? (
-  //           <Input
-  //             placeholder="Nhập lý do nghỉ việc"
-  //             onChange={(e) => console.log(e.target.value)}
-  //           />
-  //         ) : (
-  //           ""
-  //         )}
-  //       </div>
-  //     ),
-  //     okText: "Ok",
-  //     cancelText: "Cancel",
-  //     onOk: () => {
-  //       request
-  //         .put(`/staff/${staff.id}`, {
-  //           ...staff,
-  //           deleted:
-  //             staff.deleted === true
-  //               ? (staff.deleted = false)
-  //               : (staff.deleted = true),
-  //         })
-  //         .then((response) => {
-  //           if (response.status === 200) {
-  //             toast.success("Cập nhật thành công!");
-  //             loadData();
-  //           }
-  //         })
-  //         .catch((e) => {
-  //           console.log(e);
-  //         });
-  //     },
-  //   });
-  // };
+  const showDeleteConfirm = (item) => {
+    confirm({
+      title: "Xác nhận",
+      icon: <ExclamationCircleFilled />,
+      content: `Bạn có chắc muốn cập nhật trạng thái của nhân viên ${item.name} thành ${
+        item.status ? "Đang hoạt động" : "Không hoạt động"
+      }?`,
+      okText: "Xác nhận",
+      okType: "danger",
+      cancelText: "Hủy",
+      onOk() {
+        request
+          .remove(`/staff/${item.id}`)
+          .then((response) => {
+            console.log("Status update response:", response); // Debug response
+            if (response.status === 200) {
+              toast.success("Cập nhật trạng thái thành công!");
+              loadData(currentPage, pageSize, searchValue, staffStatus); // Refresh data
+            }
+          })
+          .catch((e) => {
+            console.error("Error updating staff status:", e);
+            toast.error(e.response?.data?.message || "Lỗi khi cập nhật trạng thái!");
+          });
+      },
+      onCancel() {
+        console.log("Cancel status update");
+      },
+    });
+  };
 
   const columns = [
     {
@@ -82,7 +79,6 @@ function Staff() {
       key: "index",
       className: "text-center",
     },
-   
     {
       title: "Tên",
       dataIndex: "name",
@@ -104,26 +100,35 @@ function Staff() {
       key: "createAt",
       render: (x) => <FormatDate date={x} />,
     },
-    {
-      title: "Trạng thái",
-      dataIndex: "deleted",
-      key: "deleted",
-      render: (x) => (
-        <span
-          className={x ? "fw-semibold text-danger" : "fw-semibold text-success"}
-        >
-          {x ? "Đã nghỉ" : "Đang làm"}
-        </span>
-      ),
-    },
+   {
+     title: "Trạng thái",
+     dataIndex: "status",
+     key: "status",
+     render: (x, item) => (
+       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+         <Switch
+           className={x ? "bg-danger" : "bg-warning"}
+           checkedChildren={<i className="fa-solid fa-check"></i>}
+           unCheckedChildren={<i className="fa-solid fa-xmark"></i>}
+           checked={!x}
+           onChange={() => showDeleteConfirm(item)}
+         />
+         <span style={{ fontWeight: 500 }}>
+           {x ? "Ngừng hoạt động" : "Đang hoạt động"}
+         </span>
+       </div>
+     ),
+   },
     {
       title: "Thao tác",
       dataIndex: "id",
       key: "action",
       render: (x) => (
-        <Link to={`/admin/staff/${x}`} className="btn btn-sm text-primary">
-          <i className="fas fa-edit"></i>
-        </Link>
+        <Tooltip placement="top" title="Chỉnh sửa">
+          <Link to={`/admin/staff/${x}`} className="btn btn-sm text-primary">
+            <i className="fas fa-edit"></i>
+          </Link>
+        </Tooltip>
       ),
     },
   ];
@@ -142,18 +147,18 @@ function Staff() {
                 placeholder="Tìm kiếm nhân viên theo tên, email, sdt ..."
               />
             </Col>
-            {/* <Col span={10}>
-          <div className="mb-1">Trạng thái</div>
-          <Radio.Group
-            defaultValue={null}
-            onChange={(event) => setStaffStatus(event.target.value)}
-          >
-            <Radio value={null}>Tất cả</Radio>
-            <Radio value={false}>Đang làm</Radio>
-            <Radio value={true}>Đã nghỉ</Radio>
-          </Radio.Group>
-        </Col> */}
-            
+            <Col span={8}>
+              <div className="mb-1">Trạng thái</div>
+              <Select
+                defaultValue={null}
+                style={{ width: "100%" }}
+                onChange={(value) => setStaffStatus(value)}
+              >
+                <Select.Option value={null}>Tất cả</Select.Option>
+                <Select.Option value={false}>Đang làm</Select.Option>
+                <Select.Option value={true}>Đã nghỉ</Select.Option>
+              </Select>
+            </Col>
           </Row>
         </div>
         <div className="d-flex justify-content-between align-items-center mb-2">
@@ -169,17 +174,15 @@ function Staff() {
           columns={columns}
           className="mt-3"
           pagination={{
-            // showSizeChanger: true,
             current: currentPage,
             pageSize: pageSize,
-            // pageSizeOptions: [5, 10, 20, 50, 100],
-            // showQuickJumper: true,
             total: totalPages * pageSize,
             onChange: (page, pageSize) => {
               setCurrentPage(page);
               setPageSize(pageSize);
             },
           }}
+          rowKey="id"
         />
       </div>
     </BaseUI>

@@ -75,18 +75,18 @@ public class VoucherServiceImpl implements VoucherService {
         }
         try {
             float percentReduce = Float.valueOf(request.getPercentReduce());
-            if (percentReduce < 0 || percentReduce > 50) {
-                throw new NgoaiLe("Phần trăm giảm phải nằm trong khoảng từ 1 đến 50. ");
+            if (percentReduce <= 0 || percentReduce > 80) {
+                throw new NgoaiLe("Phần trăm giảm phải nằm trong khoảng từ 1 đến 80. ");
             }
         } catch (NumberFormatException e) {
-            throw new NgoaiLe("Phần trăm giảm phải nằm trong khoảng từ 1 đến 50. ");
+            throw new NgoaiLe("Phần trăm giảm phải nằm trong khoảng từ 1 đến 80. ");
         } catch (NgoaiLe e) {
             throw e;
         }
 
-        if (Float.valueOf(request.getPercentReduce()) <= 0) {
-            throw new NgoaiLe("Phần trăm giảm phải nằm trong khoảng từ 1 đến 50. ");
-        }
+//        if (Float.valueOf(request.getPercentReduce()) < 0 ) {
+//            throw new NgoaiLe("Phần trăm giảm phải nằm trong khoảng từ 1 đến 50. ");
+//        }
         if (request.getMinBillValue().compareTo(BigDecimal.ZERO) < 0) {
             throw new NgoaiLe("Đơn tối thiểu phải lớn hơn hoặc bằng 0. ");
         }
@@ -123,8 +123,8 @@ public class VoucherServiceImpl implements VoucherService {
         if (request.getQuantity() <= 0 || request.getQuantity() != (int) request.getQuantity() || request.getQuantity() == null) {
             throw new NgoaiLe("Số lượng phải là số nguyên dương.");
         }
-        if (Float.valueOf(request.getPercentReduce()) < 0 || Float.valueOf(request.getPercentReduce()) > 50) {
-            throw new NgoaiLe("Phần trăm giảm phải nằm trong khoảng từ 1 đến 50. ");
+        if (Float.valueOf(request.getPercentReduce()) < 0 || Float.valueOf(request.getPercentReduce()) > 80) {
+            throw new NgoaiLe("Phần trăm giảm phải nằm trong khoảng từ 1 đến 80. ");
         }
         if (!String.valueOf(request.getPercentReduce()).matches("^-?\\d+(\\.\\d+)?$")) {
             throw new NgoaiLe("Phần trăm giảm phải là số");

@@ -20,15 +20,9 @@
 // import * as request from "~/utils/httpRequest";
 // import { toast } from "react-toastify";
 // import "./AddVoucher.css";
+
 // function AddVoucherForm() {
 //   const navigate = useNavigate();
-//   const {
-//     register,
-
-//     formState: { errors },
-//     setError,
-//     // trigger,
-//   } = useForm();
 //   const [form] = Form.useForm();
 //   const [inputValue, setInputValue] = useState(null);
 //   const handleInputFocus = () => {
@@ -37,9 +31,6 @@
 //     }
 //   };
 
-//   const onChange = (value) => {
-//     console.log("changed", value);
-//   };
 //   const handAddVoucher = async (data) => {
 //     const formData = new FormData();
 //     formData.append("code", data.code);
@@ -64,7 +55,6 @@
 //           })
 //           .then((response) => {
 //             console.log(response);
-
 //             if (response.data.success) {
 //               toast.success("Thêm thành công!");
 //               navigate("/admin/voucher");
@@ -79,6 +69,14 @@
 //           });
 //       },
 //     });
+//   };
+
+//   // Custom validator for non-negative values
+//   const validateNonNegative = (fieldName) => (_, value) => {
+//     if (value < 0) {
+//       return Promise.reject(`${fieldName} không được là số âm!`);
+//     }
+//     return Promise.resolve();
 //   };
 
 //   return (
@@ -101,15 +99,23 @@
 //                 <Input placeholder="Nhập tên phiếu giảm giá..." />
 //               </Form.Item>
 //             </Col>
+
 //             <Col span={12}>
 //               <Form.Item
 //                 label={"Số lượng"}
 //                 name={"quantity"}
 //                 rules={[
 //                   { required: true, message: "Số lượng không được để trống!" },
+//                   { validator: validateNonNegative("Số lượng") },
 //                 ]}
+//                 validateTrigger={["onChange", "onBlur"]}
 //               >
-//                 <Input type="number" min={0} placeholder="Nhập số lượng..." />
+//                 <InputNumber
+//                   style={{ width: "100%" }}
+//                   controls={false}
+//                   placeholder="Nhập số lượng..."
+//                   onFocus={handleInputFocus}
+//                 />
 //               </Form.Item>
 //             </Col>
 //             <Col span={12}>
@@ -121,84 +127,112 @@
 //                     required: true,
 //                     message: "Phần trăm giảm không được để trống!",
 //                   },
+//                   { validator: validateNonNegative("Phần trăm giảm") },
+//                   {
+//                     validator: (_, value) =>
+//                       value >= 1 && value <= 50
+//                         ? Promise.resolve()
+//                         : Promise.reject(
+//                             "Phần trăm giảm phải nằm trong khoảng từ 1 đến 50!"
+//                           ),
+//                   },
 //                 ]}
+//                 validateTrigger={["onChange", "onBlur"]}
 //               >
-//                 <Input
-//                   type="number"
-//                   min={0}
-//                   placeholder="Nhập phần trăm giảm..."
+//                 <InputNumber
+//                   style={{ width: "100%" }}
+//                   controls={false}
 //                   suffix="%"
+//                   placeholder="Nhập phần trăm giảm..."
+//                   onFocus={handleInputFocus}
 //                 />
 //               </Form.Item>
 //             </Col>
 //             <Col xl={12}>
-//   <Form.Item
-//     label={"Giá trị đơn tối thiểu"}
-//     name={"minBillValue"}
-//     rules={[
-//       {
-//         required: true,
-//         message: "Đơn tối thiểu không được để trống!",
-//       },
-//     ]}
-//   >
-//     <InputNumber
-//       style={{ width: "100%" }}
-//       step={10000}
-//       formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-//       parser={(value) =>
-//         value !== null && value !== undefined ? value.replace(/(,*)/g, "") : ""
-//       }
-//       controls={false}
-//       max={1000000000}
-//       min={0}
-//       suffix="VNĐ"
-//       placeholder="Nhập giá trị đơn tối thiểu..."
-//       onFocus={handleInputFocus}
-//       // Remove value={inputValue} to let Form manage the value
-//     />
-//   </Form.Item>
-// </Col>
-// <Col xl={12}>
-//   <Form.Item
-//     label={"Giá trị giảm tối đa"}
-//     name={"maxBillValue"}
-//     dependencies={["minBillValue"]} // Add dependency to minBillValue
-//     rules={[
-//       {
-//         required: true,
-//         message: "Giá trị giảm tối đa không được để trống!",
-//       },
-//       ({ getFieldValue }) => ({
-//         validator(_, value) {
-//           const minBillValue = getFieldValue("minBillValue");
-//           if (!value || !minBillValue || parseFloat(value) <= parseFloat(minBillValue)) {
-//             return Promise.resolve();
-//           }
-//           return Promise.reject(
-//             new Error("Giá trị giảm tối đa không được lớn hơn giá trị đơn tối thiểu!")
-//           );
-//         },
-//       }),
-//     ]}
-//   >
-//     <InputNumber
-//       style={{ width: "100%" }}
-//       step={10000}
-//       formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-//       parser={(value) =>
-//         value !== null && value !== undefined ? value.replace(/(,*)/g, "") : ""
-//       }
-//       controls={false}
-//       max={1000000000}
-//       min={0}
-//       suffix="VNĐ"
-//       placeholder="Nhập giá trị đơn tối đa..."
-//       onFocus={handleInputFocus}
-//       // Remove value={inputValue} to let Form manage the value
-//     />
-//   </Form.Item>
-// </Col>
+//               <Form.Item
+//                 label={"Giá trị đơn tối thiểu"}
+//                 name={"minBillValue"}
+//                 rules={[
+//                   {
+//                     required: true,
+//                     message: "Đơn tối thiểu không được để trống!",
+//                   },
+//                   { validator: validateNonNegative("Giá trị đơn tối thiểu") },
+//                 ]}
+//                 validateTrigger={["onChange", "onBlur"]}
+//               >
+//                 <InputNumber
+//                   style={{ width: "100%" }}
+//                   step={10000}
+//                   formatter={(value) =>
+//                     `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+//                   }
+//                   parser={(value) =>
+//                     value !== null && value !== undefined
+//                       ? value.replace(/(,*)/g, "")
+//                       : ""
+//                   }
+//                   controls={false}
+//                   max={1000000000}
+//                   suffix="VNĐ"
+//                   placeholder="Nhập giá trị đơn tối thiểu..."
+//                   onFocus={handleInputFocus}
+//                 />
+//               </Form.Item>
+//             </Col>
+//             <Col xl={12}>
+//               <Form.Item
+//                 label={"Giá trị giảm tối đa"}
+//                 name={"maxBillValue"}
+//                 dependencies={["minBillValue"]}
+//                 rules={[
+//                   {
+//                     required: true,
+//                     message: "Giá trị giảm tối đa không được để trống!",
+//                   },
+//                   { validator: validateNonNegative("Giá trị giảm tối đa") },
+//                   ({ getFieldValue }) => ({
+//                     validator(_, value) {
+//                       const minBillValue = getFieldValue("minBillValue");
+//                       // Check if both values are defined and maxBillValue > minBillValue
+//                       if (
+//                         value !== null &&
+//                         value !== undefined &&
+//                         minBillValue !== null &&
+//                         minBillValue !== undefined &&
+//                         parseFloat(value) > parseFloat(minBillValue)
+//                       ) {
+//                         return Promise.reject(
+//                           new Error(
+//                             "Giá trị giảm tối đa không được lớn hơn giá trị đơn tối thiểu!"
+//                           )
+//                         );
+//                       }
+//                       return Promise.resolve();
+//                     },
+//                   }),
+//                 ]}
+//                 validateTrigger={["onChange", "onBlur"]}
+//               >
+//                 <InputNumber
+//                   style={{ width: "100%" }}
+//                   step={10000}
+//                   formatter={(value) =>
+//                     `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+//                   }
+//                   parser={(value) =>
+//                     value !== null && value !== undefined
+//                       ? value.replace(/(,*)/g, "")
+//                       : ""
+//                   }
+//                   controls={false}
+//                   max={1000000000}
+//                   suffix="VNĐ"
+//                   placeholder="Nhập giá trị giảm tối đa..."
+//                   onFocus={handleInputFocus}
+//                 />
+//               </Form.Item>
+//             </Col>
 //             <Col span={12}>
 //               <Form.Item
 //                 label={"Ngày bắt đầu"}
@@ -240,8 +274,6 @@
 // }
 
 // export default AddVoucherForm;
-
-
 
 
 
@@ -301,7 +333,6 @@ function AddVoucherForm() {
             headers: { "Content-Type": "multipart/form-data" },
           })
           .then((response) => {
-            console.log(response);
             if (response.data.success) {
               toast.success("Thêm thành công!");
               navigate("/admin/voucher");
@@ -309,7 +340,7 @@ function AddVoucherForm() {
           })
           .catch((e) => {
             console.log(e);
-            toast.error(e.response.data);
+            toast.error(e.response.data || "Thêm thất bại!");
             if (e.response.data.message != null) {
               toast.error(e.response.data.message);
             }
@@ -318,10 +349,10 @@ function AddVoucherForm() {
     });
   };
 
-  // Custom validator for non-negative values
-  const validateNonNegative = (fieldName) => (_, value) => {
-    if (value < 0) {
-      return Promise.reject(`${fieldName} không được là số âm!`);
+  // Custom validator for non-negative and non-zero values
+  const validateNonNegativeAndNonZero = (fieldName) => (_, value) => {
+    if (value <= 0) {
+      return Promise.reject(`${fieldName} phải lớn hơn 0!`);
     }
     return Promise.resolve();
   };
@@ -346,14 +377,14 @@ function AddVoucherForm() {
                 <Input placeholder="Nhập tên phiếu giảm giá..." />
               </Form.Item>
             </Col>
-            
+
             <Col span={12}>
               <Form.Item
                 label={"Số lượng"}
                 name={"quantity"}
                 rules={[
                   { required: true, message: "Số lượng không được để trống!" },
-                  { validator: validateNonNegative("Số lượng") },
+                  { validator: validateNonNegativeAndNonZero("Số lượng") },
                 ]}
                 validateTrigger={["onChange", "onBlur"]}
               >
@@ -374,12 +405,14 @@ function AddVoucherForm() {
                     required: true,
                     message: "Phần trăm giảm không được để trống!",
                   },
-                  { validator: validateNonNegative("Phần trăm giảm") },
+                  // { validator: validateNonNegativeAndNonZero("Phần trăm giảm") },
                   {
                     validator: (_, value) =>
-                      value <= 50
+                      value >= 1 && value <= 80
                         ? Promise.resolve()
-                        : Promise.reject("Phần trăm giảm không được lớn hơn 50!"),
+                        : Promise.reject(
+                            "Phần trăm giảm phải nằm trong khoảng từ 1 đến 80!"
+                          ),
                   },
                 ]}
                 validateTrigger={["onChange", "onBlur"]}
@@ -402,7 +435,7 @@ function AddVoucherForm() {
                     required: true,
                     message: "Đơn tối thiểu không được để trống!",
                   },
-                  { validator: validateNonNegative("Giá trị đơn tối thiểu") },
+                  { validator: validateNonNegativeAndNonZero("Giá trị đơn tối thiểu") },
                 ]}
                 validateTrigger={["onChange", "onBlur"]}
               >
@@ -435,18 +468,26 @@ function AddVoucherForm() {
                     required: true,
                     message: "Giá trị giảm tối đa không được để trống!",
                   },
-                  { validator: validateNonNegative("Giá trị giảm tối đa") },
+                  { validator: validateNonNegativeAndNonZero("Giá trị giảm tối đa") },
                   ({ getFieldValue }) => ({
-        validator(_, value) {
-          const minBillValue = getFieldValue("minBillValue");
-          if (!value || !minBillValue || parseFloat(value) <= parseFloat(minBillValue)) {
-            return Promise.resolve();
-          }
-          return Promise.reject(
-            new Error("Giá trị giảm tối đa không được lớn hơn giá trị đơn tối thiểu!")
-          );
-        },
-      }),
+                    validator(_, value) {
+                      const minBillValue = getFieldValue("minBillValue");
+                      if (
+                        value !== null &&
+                        value !== undefined &&
+                        minBillValue !== null &&
+                        minBillValue !== undefined &&
+                        parseFloat(value) > parseFloat(minBillValue)
+                      ) {
+                        return Promise.reject(
+                          new Error(
+                            "Giá trị giảm tối đa không được lớn hơn giá trị đơn tối thiểu!"
+                          )
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  }),
                 ]}
                 validateTrigger={["onChange", "onBlur"]}
               >
@@ -497,12 +538,14 @@ function AddVoucherForm() {
                 <Input type="datetime-local" />
               </Form.Item>
             </Col>
+            <Col span={12}>
+              <Form.Item className="mt-3 float-end">
+                <Button type="primary" htmlType="submit" className="bg-primary">
+                  <i className="fas fa-plus me-2"></i> Thêm phiếu giảm giá
+                </Button>
+              </Form.Item>
+            </Col>
           </Row>
-          <Form.Item className="mt-3 float-end">
-            <Button type="primary" htmlType="submit" className="bg-primary">
-              <i className="fas fa-plus me-2"></i> Thêm phiếu giảm giá
-            </Button>
-          </Form.Item>
         </Form>
       </div>
     </BaseUI>

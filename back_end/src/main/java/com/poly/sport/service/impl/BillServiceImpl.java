@@ -12,8 +12,8 @@ import com.poly.sport.infrastructure.request.CartClientRequest;
 import com.poly.sport.infrastructure.request.bill.BillRequest;
 import com.poly.sport.infrastructure.request.bill.BillSearchRequest;
 import com.poly.sport.infrastructure.response.BillResponse;
-
 import com.poly.sport.infrastructure.response.StatisticBillStatus;
+import com.poly.sport.infrastructure.session.ShoseSession;
 import com.poly.sport.repository.*;
 import com.poly.sport.service.BillService;
 import com.poly.sport.util.GHNService;
@@ -61,6 +61,8 @@ public class BillServiceImpl implements BillService {
     private KhuyenMaiChiTietRepository khuyenMaiChiTietRepository;
     @Autowired
     private INotificationRepository notificationRepository;
+    @Autowired
+    private ShoseSession session;
 
     public PhanTrang<BillResponse> getAll(BillSearchRequest request) {
         Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSizePage());
@@ -96,12 +98,12 @@ public class BillServiceImpl implements BillService {
 
     @Override
     public Bill create() {
-        if (billRepository.findByAccountIdAndStatusAndDeletedFalse(1L, BillStatusConstant.TAO_DON_HANG, PageRequest.of(0, 10)).getContent().size() >= 5) {
+        if (billRepository.findByAccountIdAndStatusAndDeletedFalse(session.getEmployee().getId(), BillStatusConstant.TAO_DON_HANG, PageRequest.of(0, 10)).getContent().size() >= 5) {
             throw new NgoaiLe("Chỉ được tạo tối đa 5 đơn hàng!");
         }
         Bill bill = new Bill();
         BillHistory billHistory = new BillHistory();
-        bill.setAccount(accountRepository.findById(1L).get());
+        bill.setAccount(accountRepository.findById(session.getEmployee().getId()).get());
         bill.setStatus(BillStatusConstant.TAO_DON_HANG);
         bill.setCode(this.genBillCode());
         Bill billSave = billRepository.save(bill);

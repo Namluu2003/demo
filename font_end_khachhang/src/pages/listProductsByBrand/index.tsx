@@ -583,7 +583,7 @@ const ListProductsByBrand = () => {
                
 
                 {/* Bộ lọc thương hiệu */}
-                <button
+                {/* <button
                   onClick={handleDropdownToggleBrand}
                   className="btn4 w-full"
                   type="button"
@@ -620,7 +620,7 @@ const ListProductsByBrand = () => {
                         })}
                     </ul>
                   </div>
-                )}
+                )} */}
 
                
 

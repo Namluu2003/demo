@@ -65,14 +65,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public JwtAuhenticationResponse singIn(SigninRequest request) {
-        Account check = accountRepository.findByEmail(request.getEmail()).orElse(null);
-        if (check == null) {
+        Account check = accountRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new NgoaiLe("Tài khoản hoặc mật khẩu không chính xác!"));
+
+
+        if (check.getDeleted()) {
+            throw new NgoaiLe("Tài khoản đã bị vô hiệu hóa!");
+        }
+
+        if (!passwordEncoder.matches(request.getPassword(), check.getPassword())) {
             throw new NgoaiLe("Tài khoản hoặc mật khẩu không chính xác!");
         }
 
-        if (!passwordEncoder.matches(request.getPassword(), check.getPassword()) && check != null) {
-            throw new NgoaiLe("Tài khoản hoặc mật khẩu không chính xác!");
-        }
         var jwt = jwtSerrvice.genetateToken(check);
         var refreshToken = jwtSerrvice.genetateRefreshToken(new HashMap<>(), check);
         return JwtAuhenticationResponse.builder()
@@ -88,11 +92,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new NgoaiLe("Không tìm thấy tài khoản.");
         }
 
+
+        if (optional.get().getDeleted()) {
+            throw new NgoaiLe("Tài khoản đã bị vô hiệu hóa, không thể đặt lại mật khẩu!");
+        }
+
         Random rnd = new Random();
         String password = String.valueOf(rnd.nextInt(999999));
         optional.get().setPassword(passwordEncoder.encode(password));
         accountRepository.save(optional.get());
-        String emailContent = "Chào " + optional.get().getEmail() + "\n" + "Mật khẩu mới cho hệ thống T&T Sport\n" + "Tài khoản của bạn là: " + optional.get().getEmail() + "\n"+ "Mật khẩu đăng nhập là: " + password + "\n\n" + "Đây là email tự động, vui lòng không reply email này.\nCảm ơn.\n\n";
+        String emailContent = "Chào " + optional.get().getEmail() + "\n" +
+                "Mật khẩu mới cho hệ thống T&T Sport\n" +
+                "Tài khoản của bạn là: " + optional.get().getEmail() + "\n" +
+                "Mật khẩu đăng nhập là: " + password + "\n\n" +
+                "Đây là email tự động, vui lòng không reply email này.\nCảm ơn.\n\n";
         mailUtils.sendEmail(optional.get().getEmail(), "Thư xác thực tài khoản", emailContent);
         return "Thành công.";
     }

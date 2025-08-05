@@ -38,4 +38,11 @@ public class CustomerController {
                                  @ModelAttribute @Valid AccountRequest request) {
         return new ResponseObject(accountService.update(id, request));
     }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseObject delete(@PathVariable Long id) {
+        return new ResponseObject(accountService.delete(id));
+
+    }
 }

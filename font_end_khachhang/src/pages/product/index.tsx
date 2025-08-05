@@ -192,7 +192,7 @@ const Tab01 = ({
               ></path>
             </svg>
             <span className="text-gray-600">
-              Đế chống trượt, nâng đỡ tốt khi vận động.
+              Chất liệu co giãn, thoải mái khi vận động.
             </span>
           </li>
           <li className="flex items-start">
