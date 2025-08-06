@@ -1,85 +1,4 @@
-// import { Col, Row, Table,Carousel } from 'antd';
-// import Title from 'antd/es/typography/Title';
-// import React from 'react'
-// import { useEffect } from 'react';
-// import { useState } from 'react';
-// import FormatCurrency from '~/utils/FormatCurrency';
-// import httpRequest from '~/utils/httpRequest';
 
-// function TopSell() {
-//     const [topSell, setTopSell] = useState([]);
-
-//     useEffect(() => {
-//         httpRequest.get('/shoe/top-sell', {}).then(response => {
-//             setTopSell(response.data);
-//         }).catch(e => {
-//             console.log(e);
-//         })
-//     }, [])
-//     const columns = [
-//         {
-//             title: 'STT',
-//             dataIndex: 'index',
-//             key: 'index',
-//         },
-//         {
-//           title: "Ảnh",
-//           dataIndex: "images",
-//           key: "images",
-//           className: "text-center",
-//           render: (images) => (
-//             <Carousel autoplay autoplaySpeed={3000} dots={false} arrows={false} style={{ width: "100px" }}>
-//               {images.split(",").map((image, index) => (
-//                 <img
-//                   key={index}
-//                   src={image}
-//                   alt="images"
-//                   style={{ width: "100px", height: "100px" }}
-//                   className="object-fit-contain"
-//                 />
-//               ))}
-//             </Carousel>
-//           ),
-//         },
-//         {
-//             title: 'Sản phẩm',
-//             dataIndex: 'name',
-//             key: 'name',
-//             render: (x, record) => (
-//                 <>
-//                     <ul className='list-unstyled'>
-//                         <li className='fw-semibold'>{x}</li>
-//                         <small>
-//                             <li className='text-danger fw-semibold'><FormatCurrency value={record.minPrice} /> - <FormatCurrency value={record.maxPrice} /></li>
-//                             <li>Thương hiệu: {record.brand}</li>
-//                             <li>Danh mục: {record.category}</li>
-//                             <li>Loại đế: {record.sole}</li>
-//                         </small>
-//                     </ul>
-//                 </>
-//             )
-//         },
-//         {
-//             title: <span className='text-nowrap'>Số lượng bán ra</span>,
-//             dataIndex: 'quantitySold',
-//             key: 'quantitySold',
-//         },
-//     ]
-
-//     return (
-//         <>
-//             <Title level={5}>TOP SẢN PHẨM BÁN CHẠY</Title>
-//             <Table
-//                 className='text-nowrap'
-//                 columns={columns}
-//                 dataSource={topSell}
-//                 pagination={false}
-//             />
-//         </>
-//     )
-// }
-
-// export default TopSell
 
 
 
@@ -255,9 +174,7 @@ function TopSell() {
             <li className='text-danger fw-semibold'>
               <FormatCurrency value={record.minPrice} /> - <FormatCurrency value={record.maxPrice} />
             </li>
-            <li>Thương hiệu: {record.brand}</li>
-            <li>Danh mục: {record.category}</li>
-            <li>Loại đế: {record.sole}</li>
+           
           </small>
         </ul>
       ),
